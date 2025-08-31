@@ -18,6 +18,15 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, TourAdmin');
+    expect(compiled.querySelector('h3')?.textContent).toContain('Tour Admin');
   });
+
+  it('should render welcome message', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('div')?.textContent)
+      .toContain('Welcome to the Tour Admin application');
+  });
+
 });
