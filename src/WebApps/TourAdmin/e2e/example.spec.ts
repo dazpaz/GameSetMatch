@@ -11,7 +11,7 @@ test.describe('basic application tests', () => {
   });
 
   test('landing of the application page has a title', async ({ page }) => {
-    await expect(page.getByText('Tour Admin', { exact: true })).toBeVisible();
+    await expect(page.getByText('Tour Administration', { exact: true })).toBeVisible();
   });
 
   test('landing of the application page has a welcome message', async ({ page }) => {
