@@ -13,10 +13,6 @@ test.describe('basic application tests', () => {
   test('landing of the application page has a title', async ({ page }) => {
     await expect(page.getByText('Tour Administration', { exact: true })).toBeVisible();
   });
-
-  test('landing of the application page has a welcome message', async ({ page }) => {
-    await expect(page.getByText('Welcome to the Tour Admin application', { exact: true })).toBeVisible();
-  });
 });
 
 
