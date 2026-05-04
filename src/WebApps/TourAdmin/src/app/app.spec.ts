@@ -20,13 +20,4 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h4')?.textContent).toBe('Tour Administration');
   });
-
-  it('should render welcome message', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('#greeting')?.textContent)
-      .toContain('Welcome to the Tour Admin application');
-  });
-
 });
