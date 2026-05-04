@@ -1,5 +1,23 @@
-<div>
-    @for(tournament of tournaments(); track tournament.tournamentId) {
-        <div>{{ tournament.title }}</div>
-    }
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Level</th>
+                <th>Surface</th>
+                <th>Venue</th>
+                <th>Country</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(tournament of tournaments(); track tournament.tournamentId) {
+                <tr>
+                    <td>{{ tournament.title }}</td>
+                    <td>{{ tournament.level }}</td>
+                    <td>{{ tournament.surface }}</td>
+                    <td>{{ tournament.venue }}</td>
+                    <td>{{ tournament.country }}</td>
+                </tr>
+            }
+    </table>
 </div>
