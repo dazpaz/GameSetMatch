@@ -8,9 +8,9 @@ export enum Surface {
 export enum TournamentLevel {
     GrandSlam,
     TourFinals,
-    Masters1000,
-    ATP500,
-    ATP250
+    GSM1000,
+    GSM500,
+    GSM250
 }
 
 export interface ITournament {
