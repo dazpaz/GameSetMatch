@@ -1,0 +1,6 @@
+@TourManagement.WebApi_HostAddress = http://localhost:5159
+
+GET {{TourManagement.WebApi_HostAddress}}/api/Tournaments
+Accept: application/json
+
+###
