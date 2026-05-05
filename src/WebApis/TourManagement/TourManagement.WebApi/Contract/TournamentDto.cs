@@ -4,9 +4,9 @@
 	{
 		GrandSlam,
 		Masters1000,
-		Gsm500,
-		Gsm250,
-		Gsm125
+		GSM500,
+		GSM250,
+		GSM125
 	}
 
 	public enum Surface
