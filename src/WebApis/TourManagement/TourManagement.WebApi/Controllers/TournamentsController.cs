@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TourManagement.WebApi.Contract;
+using TourManagement.WebApi.Query;
 
 namespace TourManagement.WebApi.Controllers
 {
@@ -8,10 +10,9 @@ namespace TourManagement.WebApi.Controllers
 	{
 		// GET: api/Tournament
 		[HttpGet]
-		public IEnumerable<string> Get()
+		public IEnumerable<TournamentDto> Get()
 		{
-			return new string[] { "Australian Open", "French Open", "Wimbledon",
-				"Brisbane International", "Nottingham Open", "Monte-Carlo Masters" };
+			return GetTournamentList.Execute();
 		}
 	}
 }
