@@ -1,6 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ITournament } from '../tournament';
-import { TournamentData } from '../tournament-data';
+import { TournamentService } from '../tournament.service';
 
 @Component({
   selector: 'ta-tournament-list',
@@ -9,5 +9,7 @@ import { TournamentData } from '../tournament-data';
   styleUrl: './tournament-list.component.css',
 })
 export class TournamentListComponent {
-  protected readonly tournaments = signal<ITournament[]>(TournamentData.tournaments);
+  private tournamentService = inject(TournamentService);
+
+  tournaments = this.tournamentService.tournamentResource.value;
 }

@@ -6,7 +6,7 @@ import { ITournament } from './tournament';
   providedIn: 'root',
 })
 export class TournamentService {
-  private tournamentUrl = 'https://localhost:7141api/tournaments';
+  private tournamentUrl = 'https://localhost:7141/api/Tournaments';
   
   tournamentResource = httpResource<ITournament[]>(() => this.tournamentUrl, { defaultValue: [] });
 }

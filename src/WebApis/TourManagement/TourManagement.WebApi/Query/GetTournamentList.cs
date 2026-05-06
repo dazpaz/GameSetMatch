@@ -105,6 +105,20 @@ namespace TourManagement.WebApi.Query
 					MensDoubles = true,
 					WomensDoubles = false,
 					MixedDoubles = false
+				},
+				new TournamentDto
+				{
+					TournamentId = Guid.NewGuid(),
+					Title = "Entry Level Tournament",
+					Level = TournamentLevel.GSM125,
+					Surface = Surface.Carpet,
+					Venue = "My Tennis Centre",
+					Country = "United Kingdom",
+					MensSingles = true,
+					WomensSingles = true,
+					MensDoubles = false,
+					WomensDoubles = false,
+					MixedDoubles = false
 				}
 			};
 		}
