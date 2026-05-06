@@ -8,6 +8,17 @@ namespace TourManagement.WebApi
 			var builder = WebApplication.CreateBuilder(args);
 
 			// Add services to the container.
+			var myAllowedOrigins = "_myAllowSpecificOrigins";
+			builder.Services.AddCors(options =>
+			{
+				options.AddPolicy(name: myAllowedOrigins,
+					policy =>
+					{
+						policy.WithOrigins("http://localhost:4200");
+						policy.AllowAnyMethod();
+						policy.AllowAnyHeader();
+					});
+			});
 
 			builder.Services.AddControllers();
 			// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -22,6 +33,8 @@ namespace TourManagement.WebApi
 			}
 
 			app.UseHttpsRedirection();
+
+			app.UseCors(myAllowedOrigins);
 
 			app.UseAuthorization();
 
