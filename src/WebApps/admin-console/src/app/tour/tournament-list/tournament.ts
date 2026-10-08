@@ -6,15 +6,17 @@ export enum Surface {
 }
 
 export enum TournamentLevel {
-    GrandSlam,
-    Masters1000,
-    ATP500,
-    ATP250
+    GsmSlam,
+    Gsm1000,
+    Gsm500,
+    Gsm250,
+    Gsm125
 }
 
 export interface ITournament {
     tournamentId: number;
     title: string,
+    location: string,
     level: TournamentLevel,
     surface: Surface,
     mensSingles: boolean,

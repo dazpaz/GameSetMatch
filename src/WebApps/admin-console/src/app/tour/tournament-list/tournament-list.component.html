@@ -8,6 +8,7 @@
         <thead class="table-light">
           <tr>
             <th scope="col">Tournament</th>
+            <th scope="col">Location</th>
             <th scope="col">Level</th>
             <th scope="col">Surface</th>
             <th scope="col">Men's singles</th>
@@ -21,6 +22,7 @@
           @for (tournament of tournaments; track tournament.tournamentId) {
             <tr>
               <th scope="row">{{ tournament.title }}</th>
+              <td>{{ tournament.location }}</td>
               <td>{{ tournamentLevelLabels[tournament.level] }}</td>
               <td>{{ surfaceLabels[tournament.surface] }}</td>
               <td>{{ tournament.mensSingles ? 'Yes' : 'No' }}</td>
@@ -31,7 +33,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="9" class="text-center text-muted py-4">
+              <td colspan="10" class="text-center text-muted py-4">
                 No tournaments are available.
               </td>
             </tr>
