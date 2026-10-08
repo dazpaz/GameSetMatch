@@ -1,0 +1,45 @@
+<section class="card shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mb-0">
+        <caption class="visually-hidden">
+          Tournaments and their available events
+        </caption>
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Tournament</th>
+            <th scope="col">Location</th>
+            <th scope="col">Level</th>
+            <th scope="col">Surface</th>
+            <th scope="col">Men's singles</th>
+            <th scope="col">Women's singles</th>
+            <th scope="col">Men's doubles</th>
+            <th scope="col">Women's doubles</th>
+            <th scope="col">Mixed doubles</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tournament of tournaments; track tournament.tournamentId) {
+            <tr>
+              <th scope="row">{{ tournament.title }}</th>
+              <td>{{ tournament.location }}</td>
+              <td>{{ tournamentLevelLabels[tournament.level] }}</td>
+              <td>{{ surfaceLabels[tournament.surface] }}</td>
+              <td>{{ tournament.mensSingles ? 'Yes' : 'No' }}</td>
+              <td>{{ tournament.womensSingles ? 'Yes' : 'No' }}</td>
+              <td>{{ tournament.mensDoubles ? 'Yes' : 'No' }}</td>
+              <td>{{ tournament.womensDoubles ? 'Yes' : 'No' }}</td>
+              <td>{{ tournament.mixedDoubles ? 'Yes' : 'No' }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="10" class="text-center text-muted py-4">
+                No tournaments are available.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
