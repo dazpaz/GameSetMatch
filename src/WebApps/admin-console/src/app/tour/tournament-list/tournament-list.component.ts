@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ITournament, Surface, TournamentLevel } from './tournament';
+import { TournamentService } from './tournament-service';
 
 @Component({
   imports: [],
@@ -7,104 +8,7 @@ import { ITournament, Surface, TournamentLevel } from './tournament';
   templateUrl: './tournament-list.component.html',
 })
 export class TournamentListComponent {
-  readonly tournaments: readonly ITournament[] = [
-    {
-      tournamentId: 1,
-      title: 'Australian Open',
-      location: 'Melbourne, Australia',
-      level: TournamentLevel.GsmSlam,
-      surface: Surface.Hard,
-      mensSingles: true,
-      womensSingles: true,
-      mensDoubles: true,
-      womensDoubles: true,
-      mixedDoubles: true,
-    },
-    {
-      tournamentId: 2,
-      title: 'Monte-Carlo Masters',
-      location: 'Monte Carlo, Monaco',
-      level: TournamentLevel.Gsm1000,
-      surface: Surface.Clay,
-      mensSingles: true,
-      womensSingles: false,
-      mensDoubles: true,
-      womensDoubles: false,
-      mixedDoubles: false,
-    },
-    {
-      tournamentId: 3,
-      title: 'Wimbledon',
-      location: 'London, United Kingdom',
-      level: TournamentLevel.GsmSlam,
-      surface: Surface.Grass,
-      mensSingles: true,
-      womensSingles: true,
-      mensDoubles: true,
-      womensDoubles: true,
-      mixedDoubles: true,
-    },
-    {
-      tournamentId: 4,
-      title: 'Indian Wells Masters',
-      location: 'Indian Wells, United States',
-      level: TournamentLevel.Gsm1000,
-      surface: Surface.Hard,
-      mensSingles: true,
-      womensSingles: true,
-      mensDoubles: true,
-      womensDoubles: true,
-      mixedDoubles: false,
-    },
-    {
-      tournamentId: 5,
-      title: 'Barcelona Open',
-      location: 'Barcelona, Spain',
-      level: TournamentLevel.Gsm500,
-      surface: Surface.Clay,
-      mensSingles: true,
-      womensSingles: false,
-      mensDoubles: true,
-      womensDoubles: false,
-      mixedDoubles: false,
-    },
-    {
-      tournamentId: 6,
-      title: 'Stuttgart Open',
-      location: 'Stuttgart, Germany',
-      level: TournamentLevel.Gsm250,
-      surface: Surface.Grass,
-      mensSingles: false,
-      womensSingles: true,
-      mensDoubles: false,
-      womensDoubles: true,
-      mixedDoubles: false,
-    },
-    {
-      tournamentId: 7,
-      title: 'Lyon Challenger',
-      location: 'Lyon, France',
-      level: TournamentLevel.Gsm125,
-      surface: Surface.Carpet,
-      mensSingles: true,
-      womensSingles: false,
-      mensDoubles: false,
-      womensDoubles: true,
-      mixedDoubles: false,
-    },
-    {
-      tournamentId: 8,
-      title: 'US Open',
-      location: 'New York, United States',
-      level: TournamentLevel.GsmSlam,
-      surface: Surface.Hard,
-      mensSingles: true,
-      womensSingles: true,
-      mensDoubles: false,
-      womensDoubles: false,
-      mixedDoubles: true,
-    },
-  ];
+  readonly tournaments: readonly ITournament[] = inject(TournamentService).getTournaments();
 
   readonly tournamentLevelLabels: Readonly<Record<TournamentLevel, string>> = {
     [TournamentLevel.GsmSlam]: 'GSM Slam',
