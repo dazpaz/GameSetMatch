@@ -16,6 +16,7 @@ export class TournamentService {
         mensDoubles: true,
         womensDoubles: true,
         mixedDoubles: true,
+        isActive: true
       },
       {
         tournamentId: 2,
@@ -28,6 +29,7 @@ export class TournamentService {
         mensDoubles: true,
         womensDoubles: false,
         mixedDoubles: false,
+        isActive: true,
       },
       {
         tournamentId: 3,
@@ -40,6 +42,7 @@ export class TournamentService {
         mensDoubles: true,
         womensDoubles: true,
         mixedDoubles: true,
+        isActive: true,
       },
       {
         tournamentId: 4,
@@ -52,6 +55,7 @@ export class TournamentService {
         mensDoubles: true,
         womensDoubles: true,
         mixedDoubles: false,
+        isActive: true,
       },
       {
         tournamentId: 5,
@@ -64,6 +68,7 @@ export class TournamentService {
         mensDoubles: true,
         womensDoubles: false,
         mixedDoubles: false,
+        isActive: true
       },
       {
         tournamentId: 6,
@@ -76,6 +81,7 @@ export class TournamentService {
         mensDoubles: false,
         womensDoubles: true,
         mixedDoubles: false,
+        isActive: false
       },
       {
         tournamentId: 7,
@@ -88,6 +94,7 @@ export class TournamentService {
         mensDoubles: false,
         womensDoubles: true,
         mixedDoubles: false,
+        isActive: true
       },
       {
         tournamentId: 8,
@@ -100,6 +107,33 @@ export class TournamentService {
         mensDoubles: false,
         womensDoubles: false,
         mixedDoubles: true,
+        isActive: true
+      },
+      {
+        tournamentId: 9,
+        title: 'French Open',
+        location: 'Paris, France',
+        level: TournamentLevel.GsmSlam,
+        surface: Surface.Clay,
+        mensSingles: true,
+        womensSingles: true,
+        mensDoubles: true,
+        womensDoubles: true,
+        mixedDoubles: true,
+        isActive: true
+      },
+      {
+        tournamentId: 10,
+        title: 'Miami Open',
+        location: 'Miami, United States',
+        level: TournamentLevel.Gsm1000,
+        surface: Surface.Hard,
+        mensSingles: true,
+        womensSingles: true,
+        mensDoubles: true,
+        womensDoubles: true,
+        mixedDoubles: false,
+        isActive: false
       },
     ];
   }
