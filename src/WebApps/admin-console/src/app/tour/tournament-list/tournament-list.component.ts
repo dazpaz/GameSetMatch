@@ -8,7 +8,9 @@ import { TournamentService } from './tournament-service';
   templateUrl: './tournament-list.component.html',
 })
 export class TournamentListComponent {
-  readonly tournaments: readonly ITournament[] = inject(TournamentService).getTournaments();
+  readonly tournaments: readonly ITournament[] = inject(TournamentService)
+    .getTournaments()
+    .filter((tournament) => tournament.isActive);
 
   readonly tournamentLevelLabels: Readonly<Record<TournamentLevel, string>> = {
     [TournamentLevel.GsmSlam]: 'GSM Slam',
