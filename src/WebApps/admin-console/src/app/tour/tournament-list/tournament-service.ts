@@ -1,0 +1,140 @@
+import { Injectable } from '@angular/core';
+import { ITournament, Surface, TournamentLevel } from './tournament';
+
+@Injectable({ providedIn: 'root' })
+export class TournamentService {
+  getTournaments(): readonly ITournament[] {
+    return [
+      {
+        tournamentId: 1,
+        title: 'Australian Open',
+        location: 'Melbourne, Australia',
+        level: TournamentLevel.GsmSlam,
+        surface: Surface.Hard,
+        mensSingles: true,
+        womensSingles: true,
+        mensDoubles: true,
+        womensDoubles: true,
+        mixedDoubles: true,
+        isActive: true
+      },
+      {
+        tournamentId: 2,
+        title: 'Monte-Carlo Masters',
+        location: 'Monte Carlo, Monaco',
+        level: TournamentLevel.Gsm1000,
+        surface: Surface.Clay,
+        mensSingles: true,
+        womensSingles: false,
+        mensDoubles: true,
+        womensDoubles: false,
+        mixedDoubles: false,
+        isActive: true,
+      },
+      {
+        tournamentId: 3,
+        title: 'Wimbledon',
+        location: 'London, United Kingdom',
+        level: TournamentLevel.GsmSlam,
+        surface: Surface.Grass,
+        mensSingles: true,
+        womensSingles: true,
+        mensDoubles: true,
+        womensDoubles: true,
+        mixedDoubles: true,
+        isActive: true,
+      },
+      {
+        tournamentId: 4,
+        title: 'Indian Wells Masters',
+        location: 'Indian Wells, United States',
+        level: TournamentLevel.Gsm1000,
+        surface: Surface.Hard,
+        mensSingles: true,
+        womensSingles: true,
+        mensDoubles: true,
+        womensDoubles: true,
+        mixedDoubles: false,
+        isActive: true,
+      },
+      {
+        tournamentId: 5,
+        title: 'Barcelona Open',
+        location: 'Barcelona, Spain',
+        level: TournamentLevel.Gsm500,
+        surface: Surface.Clay,
+        mensSingles: true,
+        womensSingles: false,
+        mensDoubles: true,
+        womensDoubles: false,
+        mixedDoubles: false,
+        isActive: true
+      },
+      {
+        tournamentId: 6,
+        title: 'Stuttgart Open',
+        location: 'Stuttgart, Germany',
+        level: TournamentLevel.Gsm250,
+        surface: Surface.Grass,
+        mensSingles: false,
+        womensSingles: true,
+        mensDoubles: false,
+        womensDoubles: true,
+        mixedDoubles: false,
+        isActive: false
+      },
+      {
+        tournamentId: 7,
+        title: 'Lyon Challenger',
+        location: 'Lyon, France',
+        level: TournamentLevel.Gsm125,
+        surface: Surface.Carpet,
+        mensSingles: true,
+        womensSingles: false,
+        mensDoubles: false,
+        womensDoubles: true,
+        mixedDoubles: false,
+        isActive: true
+      },
+      {
+        tournamentId: 8,
+        title: 'US Open',
+        location: 'New York, United States',
+        level: TournamentLevel.GsmSlam,
+        surface: Surface.Hard,
+        mensSingles: true,
+        womensSingles: true,
+        mensDoubles: false,
+        womensDoubles: false,
+        mixedDoubles: true,
+        isActive: true
+      },
+      {
+        tournamentId: 9,
+        title: 'French Open',
+        location: 'Paris, France',
+        level: TournamentLevel.GsmSlam,
+        surface: Surface.Clay,
+        mensSingles: true,
+        womensSingles: true,
+        mensDoubles: true,
+        womensDoubles: true,
+        mixedDoubles: true,
+        isActive: true
+      },
+      {
+        tournamentId: 10,
+        title: 'Miami Open',
+        location: 'Miami, United States',
+        level: TournamentLevel.Gsm1000,
+        surface: Surface.Hard,
+        mensSingles: true,
+        womensSingles: true,
+        mensDoubles: true,
+        womensDoubles: true,
+        mixedDoubles: false,
+        isActive: false
+      },
+    ];
+  }
+}

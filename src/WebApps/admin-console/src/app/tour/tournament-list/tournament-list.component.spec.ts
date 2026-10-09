@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TournamentListComponent } from './tournament-list.component';
+import { TournamentService } from './tournament-service';
 
 describe('TournamentListComponent', () => {
   let component: TournamentListComponent;
@@ -19,10 +20,16 @@ describe('TournamentListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render a row for every tournament', () => {
-    const rows = fixture.nativeElement.querySelectorAll('tbody tr');
+  it('should render only active tournaments', () => {
+    const activeTournamentTitles = TestBed.inject(TournamentService)
+      .getTournaments()
+      .filter((tournament) => tournament.isActive)
+      .map((tournament) => tournament.title);
+    const renderedTournamentTitles = Array.from(
+      fixture.nativeElement.querySelectorAll('tbody th[scope="row"]'),
+      (cell: Element) => cell.textContent?.trim()
+    );
 
-    expect(rows).toHaveLength(component.tournaments.length);
-    expect(rows[0].textContent).toContain('Australian Open');
+    expect(renderedTournamentTitles).toEqual(activeTournamentTitles);
   });
 });

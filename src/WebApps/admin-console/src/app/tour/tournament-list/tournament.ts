@@ -23,5 +23,6 @@ export interface ITournament {
     womensSingles: boolean,
     mensDoubles: boolean,
     womensDoubles: boolean,
-    mixedDoubles: boolean
+    mixedDoubles: boolean,
+    isActive: boolean
 }
