@@ -6,7 +6,7 @@ export class TournamentService {
   getTournaments(): readonly ITournament[] {
     return [
       {
-        tournamentId: 1,
+        tournamentId: '00000000-0000-4000-8000-000000000001',
         title: 'Australian Open',
         location: 'Melbourne, Australia',
         level: TournamentLevel.GsmSlam,
@@ -19,7 +19,7 @@ export class TournamentService {
         isActive: true
       },
       {
-        tournamentId: 2,
+        tournamentId: '00000000-0000-4000-8000-000000000002',
         title: 'Monte-Carlo Masters',
         location: 'Monte Carlo, Monaco',
         level: TournamentLevel.Gsm1000,
@@ -32,7 +32,7 @@ export class TournamentService {
         isActive: true,
       },
       {
-        tournamentId: 3,
+        tournamentId: '00000000-0000-4000-8000-000000000003',
         title: 'Wimbledon',
         location: 'London, United Kingdom',
         level: TournamentLevel.GsmSlam,
@@ -45,7 +45,7 @@ export class TournamentService {
         isActive: true,
       },
       {
-        tournamentId: 4,
+        tournamentId: '00000000-0000-4000-8000-000000000004',
         title: 'Indian Wells Masters',
         location: 'Indian Wells, United States',
         level: TournamentLevel.Gsm1000,
@@ -58,7 +58,7 @@ export class TournamentService {
         isActive: true,
       },
       {
-        tournamentId: 5,
+        tournamentId: '00000000-0000-4000-8000-000000000005',
         title: 'Barcelona Open',
         location: 'Barcelona, Spain',
         level: TournamentLevel.Gsm500,
@@ -71,7 +71,7 @@ export class TournamentService {
         isActive: true
       },
       {
-        tournamentId: 6,
+        tournamentId: '00000000-0000-4000-8000-000000000006',
         title: 'Stuttgart Open',
         location: 'Stuttgart, Germany',
         level: TournamentLevel.Gsm250,
@@ -84,7 +84,7 @@ export class TournamentService {
         isActive: false
       },
       {
-        tournamentId: 7,
+        tournamentId: '00000000-0000-4000-8000-000000000007',
         title: 'Lyon Challenger',
         location: 'Lyon, France',
         level: TournamentLevel.Gsm125,
@@ -97,7 +97,7 @@ export class TournamentService {
         isActive: true
       },
       {
-        tournamentId: 8,
+        tournamentId: '00000000-0000-4000-8000-000000000008',
         title: 'US Open',
         location: 'New York, United States',
         level: TournamentLevel.GsmSlam,
@@ -110,7 +110,7 @@ export class TournamentService {
         isActive: true
       },
       {
-        tournamentId: 9,
+        tournamentId: '00000000-0000-4000-8000-000000000009',
         title: 'French Open',
         location: 'Paris, France',
         level: TournamentLevel.GsmSlam,
@@ -123,7 +123,7 @@ export class TournamentService {
         isActive: true
       },
       {
-        tournamentId: 10,
+        tournamentId: '00000000-0000-4000-8000-000000000010',
         title: 'Miami Open',
         location: 'Miami, United States',
         level: TournamentLevel.Gsm1000,
