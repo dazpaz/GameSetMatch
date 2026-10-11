@@ -19,7 +19,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (tournament of tournaments; track tournament.tournamentId) {
+          @for (tournament of tournaments(); track tournament.tournamentId) {
             <tr>
               <th scope="row">{{ tournament.title }}</th>
               <td>{{ tournament.location }}</td>

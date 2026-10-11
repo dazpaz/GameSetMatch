@@ -10,6 +10,14 @@ namespace AdminConsoleApi
 			// Add services to the container.
 
 			builder.Services.AddControllers();
+			// Allow cross-origin requests from Angular dev server
+			builder.Services.AddCors(options =>
+			{
+				options.AddPolicy("AllowAdminConsole", policy =>
+					policy.WithOrigins("http://localhost:4200")
+						.AllowAnyHeader()
+						.AllowAnyMethod());
+			});
 			// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 			builder.Services.AddOpenApi();
 
@@ -20,6 +28,9 @@ namespace AdminConsoleApi
 			{
 				app.MapOpenApi();
 			}
+
+			// Enable CORS policy for requests from the Angular dev server
+			app.UseCors("AllowAdminConsole");
 
 			app.UseHttpsRedirection();
 

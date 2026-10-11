@@ -14,7 +14,7 @@ export enum TournamentLevel {
 }
 
 export interface ITournament {
-    tournamentId: number;
+    tournamentId: string;
     title: string,
     location: string,
     level: TournamentLevel,
