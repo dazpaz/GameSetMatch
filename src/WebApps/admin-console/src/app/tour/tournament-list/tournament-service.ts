@@ -1,140 +1,14 @@
-import { Injectable } from '@angular/core';
-import { ITournament, Surface, TournamentLevel } from './tournament';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ITournament } from './tournament';
 
 @Injectable({ providedIn: 'root' })
 export class TournamentService {
-  getTournaments(): readonly ITournament[] {
-    return [
-      {
-        tournamentId: '00000000-0000-4000-8000-000000000001',
-        title: 'Australian Open',
-        location: 'Melbourne, Australia',
-        level: TournamentLevel.GsmSlam,
-        surface: Surface.Hard,
-        mensSingles: true,
-        womensSingles: true,
-        mensDoubles: true,
-        womensDoubles: true,
-        mixedDoubles: true,
-        isActive: true
-      },
-      {
-        tournamentId: '00000000-0000-4000-8000-000000000002',
-        title: 'Monte-Carlo Masters',
-        location: 'Monte Carlo, Monaco',
-        level: TournamentLevel.Gsm1000,
-        surface: Surface.Clay,
-        mensSingles: true,
-        womensSingles: false,
-        mensDoubles: true,
-        womensDoubles: false,
-        mixedDoubles: false,
-        isActive: true,
-      },
-      {
-        tournamentId: '00000000-0000-4000-8000-000000000003',
-        title: 'Wimbledon',
-        location: 'London, United Kingdom',
-        level: TournamentLevel.GsmSlam,
-        surface: Surface.Grass,
-        mensSingles: true,
-        womensSingles: true,
-        mensDoubles: true,
-        womensDoubles: true,
-        mixedDoubles: true,
-        isActive: true,
-      },
-      {
-        tournamentId: '00000000-0000-4000-8000-000000000004',
-        title: 'Indian Wells Masters',
-        location: 'Indian Wells, United States',
-        level: TournamentLevel.Gsm1000,
-        surface: Surface.Hard,
-        mensSingles: true,
-        womensSingles: true,
-        mensDoubles: true,
-        womensDoubles: true,
-        mixedDoubles: false,
-        isActive: true,
-      },
-      {
-        tournamentId: '00000000-0000-4000-8000-000000000005',
-        title: 'Barcelona Open',
-        location: 'Barcelona, Spain',
-        level: TournamentLevel.Gsm500,
-        surface: Surface.Clay,
-        mensSingles: true,
-        womensSingles: false,
-        mensDoubles: true,
-        womensDoubles: false,
-        mixedDoubles: false,
-        isActive: true
-      },
-      {
-        tournamentId: '00000000-0000-4000-8000-000000000006',
-        title: 'Stuttgart Open',
-        location: 'Stuttgart, Germany',
-        level: TournamentLevel.Gsm250,
-        surface: Surface.Grass,
-        mensSingles: false,
-        womensSingles: true,
-        mensDoubles: false,
-        womensDoubles: true,
-        mixedDoubles: false,
-        isActive: false
-      },
-      {
-        tournamentId: '00000000-0000-4000-8000-000000000007',
-        title: 'Lyon Challenger',
-        location: 'Lyon, France',
-        level: TournamentLevel.Gsm125,
-        surface: Surface.Carpet,
-        mensSingles: true,
-        womensSingles: false,
-        mensDoubles: false,
-        womensDoubles: true,
-        mixedDoubles: false,
-        isActive: true
-      },
-      {
-        tournamentId: '00000000-0000-4000-8000-000000000008',
-        title: 'US Open',
-        location: 'New York, United States',
-        level: TournamentLevel.GsmSlam,
-        surface: Surface.Hard,
-        mensSingles: true,
-        womensSingles: true,
-        mensDoubles: false,
-        womensDoubles: false,
-        mixedDoubles: true,
-        isActive: true
-      },
-      {
-        tournamentId: '00000000-0000-4000-8000-000000000009',
-        title: 'French Open',
-        location: 'Paris, France',
-        level: TournamentLevel.GsmSlam,
-        surface: Surface.Clay,
-        mensSingles: true,
-        womensSingles: true,
-        mensDoubles: true,
-        womensDoubles: true,
-        mixedDoubles: true,
-        isActive: true
-      },
-      {
-        tournamentId: '00000000-0000-4000-8000-000000000010',
-        title: 'Miami Open',
-        location: 'Miami, United States',
-        level: TournamentLevel.Gsm1000,
-        surface: Surface.Hard,
-        mensSingles: true,
-        womensSingles: true,
-        mensDoubles: true,
-        womensDoubles: true,
-        mixedDoubles: false,
-        isActive: false
-      },
-    ];
+  private readonly http = inject(HttpClient);
+  private readonly tournamentsUrl = 'https://localhost:7288/tournaments';
+
+  getTournaments(): Observable<readonly ITournament[]> {
+    return this.http.get<readonly ITournament[]>(this.tournamentsUrl);
   }
 }

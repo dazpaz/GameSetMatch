@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ITournament, Surface, TournamentLevel } from './tournament';
 import { TournamentService } from './tournament-service';
 
@@ -8,9 +9,13 @@ import { TournamentService } from './tournament-service';
   templateUrl: './tournament-list.component.html',
 })
 export class TournamentListComponent {
-  readonly tournaments: readonly ITournament[] = inject(TournamentService)
-    .getTournaments()
-    .filter((tournament) => tournament.isActive);
+  private readonly allTournaments = toSignal(inject(TournamentService).getTournaments(), {
+    initialValue: [] as readonly ITournament[],
+  });
+
+  readonly tournaments = computed(() =>
+    this.allTournaments().filter((tournament) => tournament.isActive),
+  );
 
   readonly tournamentLevelLabels: Readonly<Record<TournamentLevel, string>> = {
     [TournamentLevel.GsmSlam]: 'GSM Slam',
