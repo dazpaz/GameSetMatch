@@ -66,4 +66,58 @@ describe('TournamentListComponent', () => {
 
     expect(renderedTournamentTitles).toEqual(['Active Open']);
   });
+
+  it('should not show an error alert when the request succeeds', () => {
+    expect(fixture.nativeElement.querySelector('.alert.alert-danger')).toBeNull();
+    expect(component.errorMessage()).toBeNull();
+  });
+});
+
+describe('TournamentListComponent when the API returns an error', () => {
+  let component: TournamentListComponent;
+  let fixture: ComponentFixture<TournamentListComponent>;
+  let http: HttpTestingController;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [TournamentListComponent],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
+
+    http = TestBed.inject(HttpTestingController);
+    fixture = TestBed.createComponent(TournamentListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    http
+      .expectOne('https://localhost:7288/tournaments')
+      .flush('Server error', { status: 500, statusText: 'Internal Server Error' });
+    await fixture.whenStable();
+    fixture.detectChanges();
+  });
+
+  afterEach(() => http.verify());
+
+  it('should set the error message', () => {
+    expect(component.errorMessage()).toBe('Unable to retrieve tournaments');
+  });
+
+  it('should show a red Bootstrap alert above the table', () => {
+    const element: HTMLElement = fixture.nativeElement;
+    const alert = element.querySelector('.alert.alert-danger');
+
+    expect(alert?.textContent?.trim()).toBe('Unable to retrieve tournaments');
+    expect(alert?.getAttribute('role')).toBe('alert');
+
+    const table = element.querySelector('table')!;
+    expect(
+      alert!.compareDocumentPosition(table) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('should render no tournaments', () => {
+    expect(fixture.nativeElement.querySelectorAll('tbody th[scope="row"]').length).toBe(0);
+    expect(fixture.nativeElement.querySelector('tbody td')?.textContent).toContain(
+      'No tournaments are available.',
+    );
+  });
 });

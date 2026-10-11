@@ -1,5 +1,6 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { catchError, of } from 'rxjs';
 import { ITournament, Surface, TournamentLevel } from './tournament';
 import { TournamentService } from './tournament-service';
 
@@ -9,9 +10,19 @@ import { TournamentService } from './tournament-service';
   templateUrl: './tournament-list.component.html',
 })
 export class TournamentListComponent {
-  private readonly allTournaments = toSignal(inject(TournamentService).getTournaments(), {
-    initialValue: [] as readonly ITournament[],
-  });
+  readonly errorMessage = signal<string | null>(null);
+
+  private readonly allTournaments = toSignal(
+    inject(TournamentService)
+      .getTournaments()
+      .pipe(
+        catchError(() => {
+          this.errorMessage.set('Unable to retrieve tournaments');
+          return of([] as readonly ITournament[]);
+        }),
+      ),
+    { initialValue: [] as readonly ITournament[] },
+  );
 
   readonly tournaments = computed(() =>
     this.allTournaments().filter((tournament) => tournament.isActive),
