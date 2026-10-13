@@ -60,6 +60,9 @@
 			return left.Equals(right);
 		}
 
-		public static bool operator !=(Entity<TId>? left, Entity<TId>? right) => !(left == right);
+		public static bool operator !=(Entity<TId>? left, Entity<TId>? right)
+		{
+			return !(left == right);
+		}
 	}
 }
