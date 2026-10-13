@@ -9,7 +9,7 @@
 		}
 
 		[Fact]
-		public void New_entity_has_non_empty_id()
+		public void New_entityId_has_non_empty_id()
 		{
 			var id = new TestEntityId();
 			Assert.False(id.Id == Guid.Empty);
@@ -22,7 +22,7 @@
 		}
 
 		[Fact]
-		public void Two_entities_with_same_guid_are_equal()
+		public void Two_entityIds_with_same_guid_are_equal()
 		{
 			var guid = Guid.NewGuid();
 			var a = new TestEntityId(guid);

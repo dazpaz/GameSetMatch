@@ -18,42 +18,39 @@
 		/// </summary>
 		protected Entity(TId id)
 		{
+			if (Equals(id, default(TId)))
+			{
+				throw new ArgumentException("The ID cannot be the type's default value.", nameof(id));
+			}
 			Id = id;
-		}
-
-		public override bool Equals(object? otherObject)
-		{
-			if (otherObject is null) return false;
-
-			if (ReferenceEquals(this, otherObject)) return true;
-
-			if (otherObject.GetType() != GetType()) return false;
-
-			return Equals(otherObject as Entity<TId>);
 		}
 
 		public virtual bool Equals(Entity<TId>? otherObject)
 		{
-			if (otherObject is null) return false;
+			if (otherObject == null) return false;
+			if (Id is null) return false;
+			return Id.Equals(otherObject.Id);
+		}
 
-			if (ReferenceEquals(this, otherObject)) return true;
-
-			if (GetType() != otherObject.GetType()) return false;
-
-			// Use object.Equals to handle null and value-type comparisons safely
-			return Equals(Id, otherObject.Id);
+		public override bool Equals(object? otherObject)
+		{
+			var other = otherObject as Entity<TId>;
+			if (other is null) return false;
+			if (ReferenceEquals(this, other)) return true;
+			if (GetType() != other.GetType()) return false;
+			if (Equals(Id, default(TId)) || Equals(other.Id, default(TId))) return false;
+			if (Id is null) return false;
+			return Id.Equals(other.Id);
 		}
 
 		public override int GetHashCode()
 		{
-			if (Id == null) return base.GetHashCode();
-
-			return EqualityComparer<TId>.Default.GetHashCode(Id);
+			return (GetType().ToString() + Id).GetHashCode();
 		}
 
 		public static bool operator ==(Entity<TId>? left, Entity<TId>? right)
 		{
-			if (ReferenceEquals(left, right)) return true;
+			if (left is null && right is null) return true;
 
 			if (left is null || right is null) return false;
 
