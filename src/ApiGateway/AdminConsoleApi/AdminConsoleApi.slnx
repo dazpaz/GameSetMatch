@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="../Common/DomainDesign.Common.UnitTest/DomainDesign.Common.UnitTest.csproj" Id="70472710-0897-4df0-a6c0-ec63681e4909" />
+  <Project Path="../Common/DomainDesign.Common/DomainDesign.Common.csproj" Id="4fda701e-8639-42c1-9419-63b41f3b3e51" />
   <Project Path="AdminConsoleApi/AdminConsoleApi.csproj" />
 </Solution>
