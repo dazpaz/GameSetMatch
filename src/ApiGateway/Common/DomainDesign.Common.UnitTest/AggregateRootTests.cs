@@ -7,7 +7,21 @@
 		private class TestAggregate : AggregateRoot<int>
 		{
 			public TestAggregate() { }
+			public TestAggregate(int id) : base(id) { }
 			public void AddEvent(IDomainEvent ev) => RaiseDomainEvent(ev);
+		}
+
+		[Fact]
+		public void AggregateRoot_CanBeInstantiated()
+		{
+			var aggNoId = new TestAggregate();
+			var aggWithId = new TestAggregate(10);
+
+			Assert.NotNull(aggNoId);
+			Assert.Equal(0, aggNoId.Id);
+
+			Assert.NotNull(aggWithId);
+			Assert.Equal(10, aggWithId.Id);
 		}
 
 		[Fact]

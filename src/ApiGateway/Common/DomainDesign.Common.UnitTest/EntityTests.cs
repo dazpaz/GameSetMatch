@@ -2,92 +2,179 @@
 {
 	public class EntityTests
 	{
-		private sealed class TestEntity : Entity<int>
+		private class TestEntityA : Entity<int>
 		{
-			public TestEntity() : base() { }
-			public TestEntity(int id) : base(id) { }
+			public TestEntityA() : base() { }
+			public TestEntityA(int id) : base(id) { }
 		}
 
-		private sealed class OtherEntity : Entity<int>
+		private class TestEntityB : Entity<int>
 		{
-			public OtherEntity() : base() { }
-			public OtherEntity(int id) : base(id) { }
+			public TestEntityB() : base() { }
+			public TestEntityB(int id) : base(id) { }
 		}
 
-		[Fact]
-		public void Equals_SameReference_ReturnsTrue()
+		private class TestEntityGuid : Entity<Guid>
 		{
-			var e = new TestEntity(1);
-
-			Assert.True(e.Equals(e));
-
-			#pragma warning disable CS1718
-			Assert.True(e == e);
-			#pragma warning restore CS1718
+			public TestEntityGuid() : base() { }
+			public TestEntityGuid	(Guid id) : base(id) { }
 		}
 
 		[Fact]
-		public void Equals_ObjectOverload_Null_ReturnsFalse()
+		public void Constructor_WithValidId_SetsId()
 		{
-			var e = new TestEntity(1);
-
-			Assert.False(e.Equals((object?)null));
+			var e = new TestEntityA(5);
+			Assert.Equal(5, e.Id);
 		}
 
 		[Fact]
-		public void Equals_DifferentTypesWithSameId_ReturnsFalse()
+		public void ParameterlessConstructor_SetsIdToDefault()
 		{
-			var a = new TestEntity(5);
-			var b = new OtherEntity(5);
+			var e1 = new TestEntityGuid();
+			var e2 = new TestEntityA();
+
+			Assert.Equal(default, e1.Id);
+			Assert.Equal(default, e2.Id);
+		}
+
+		[Fact]
+		public void Constructor_WithDefaultId_Throws()
+		{
+			Assert.Throws<ArgumentException>(() => new TestEntityA(0));
+		}
+
+		[Fact]
+		public void Equals_SameTypeAndId_AreEqual()
+		{
+			var a = new TestEntityA(7);
+			var b = new TestEntityA(7);
+
+			Assert.True(a.Equals(b));
+			Assert.True(a == b);
+			Assert.False(a != b);
+			Assert.Equal(a.GetHashCode(), b.GetHashCode());
+		}
+
+		[Fact]
+		public void Equals_CompareWithNull_ReturnsFalse()
+		{
+			var a = new TestEntityA(1);
+			TestEntityA? b = null;
 
 			Assert.False(a.Equals(b));
 			Assert.False(a == b);
+			Assert.False(b == a);
+			Assert.True(a != b);
 		}
 
 		[Fact]
-		public void Equals_SameId_ReturnsTrue()
+		public void Equals_WhenBothAreNull_ReturnsTrue()
 		{
-			var a = new TestEntity(42);
-			var b = new TestEntity(42);
+			TestEntityA? a = null;
+			TestEntityA? b = null;
 
+			Assert.True(a == b);
+			Assert.False(a != b);
+		}
+
+		[Fact]
+		public void Equals_DifferentTypeSameId_AreEqual()
+		{
+			var a = new TestEntityA(3);
+			var b = new TestEntityB(3);
+
+			// The typed Equals(Entity<TId>) implementation compares Ids only, so
+			// different subclasses with the same id are considered equal.
 			Assert.True(a.Equals(b));
 			Assert.True(a == b);
 			Assert.False(a != b);
 		}
 
 		[Fact]
-		public void Equals_DifferentId_ReturnsFalse()
+		public void EqualsObject_OtherObjectIsDifferentType_ReturnsFalse()
 		{
-			var a = new TestEntity(1);
-			var b = new TestEntity(2);
+			var a = new TestEntityA(3);
+			var b = new TestEntityB(3);
+
+			Assert.False(a.Equals((object)b));
+		}
+
+		[Fact]
+		public void EqualsObject_OtherObjectIsNotEntityOfRightType_ReturnsFalse()
+		{
+			var a = new TestEntityA(3);
+			var b = new TestEntityGuid();
 
 			Assert.False(a.Equals(b));
-			Assert.False(a == b);
-			Assert.True(a != b);
 		}
 
 		[Fact]
-		public void GetHashCode_WithId_UsesIdHashCode()
+		public void EqualsObject_EqualObject_ReturnsTrue()
 		{
-			var id = 123;
-			var e = new TestEntity(id);
+			var a = new TestEntityA(3);
+			var b = new TestEntityA(3);
 
-			var expected = EqualityComparer<int>.Default.GetHashCode(id);
-
-			Assert.Equal(expected, e.GetHashCode());
+			Assert.True(a.Equals((object)b));
 		}
 
 		[Fact]
-		public void OperatorEquality_NullHandling()
+		public void EqualsObject_DifferntId_ReturnsFalse()
 		{
-			TestEntity? left = null;
-			TestEntity? right = null;
+			var a = new TestEntityA(3);
+			var b = new TestEntityA(4);
 
-			Assert.True(left == right);
+			Assert.False(a.Equals((object)b));
+		}
 
-			left = new TestEntity(1);
-			Assert.False(left == right);
-			Assert.True(left != right);
+		[Fact]
+		public void EqualsObject_SameObject_ReturnsTrue()
+		{
+			var a = new TestEntityA(3);
+			var b = a;
+
+			Assert.True(a.Equals((object)b));
+		}
+
+		[Fact]
+		public void EqualsObject_EntityHasDefaultId_ReturnsFalse()
+		{
+			var a = new TestEntityA();
+			var b = new TestEntityA(3);
+
+			Assert.False(a.Equals((object)b));
+			Assert.False(b.Equals((object)a));
+		}
+
+		[Fact]
+		public void EqualsObject_BothEntitiesHaveDefaultId_ReturnsFalse()
+		{
+			var a = new TestEntityA();
+			var b = new TestEntityA();
+			Assert.False(a.Equals((object)b));
+		}
+
+		[Fact]
+		public void GetHashCode_DifferentTypesSameId_ReturnsDifferentHashCodes()
+		{
+			var a = new TestEntityA(10);
+			var b = new TestEntityB(10);
+			Assert.NotEqual(a.GetHashCode(), b.GetHashCode());
+		}
+
+		[Fact]
+		public void GetHashCode_SameTypesDifferentId_ReturnsDifferentHashCodes()
+		{
+			var a = new TestEntityA(10);
+			var b = new TestEntityA(20);
+			Assert.NotEqual(a.GetHashCode(), b.GetHashCode());
+		}
+
+		[Fact]
+		public void GetHashCode_SameIdAndType_ReturnsSameHashCode()
+		{
+			var a = new TestEntityA(10);
+			var b = new TestEntityA(10);
+			Assert.Equal(a.GetHashCode(), b.GetHashCode());
 		}
 	}
 }

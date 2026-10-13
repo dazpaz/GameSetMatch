@@ -35,8 +35,6 @@
 
 		public static bool operator ==(EntityId<T> a, EntityId<T> b)
 		{
-			if (a is null && b is null) return true;
-			if (a is null || b is null) return false;
 			return a.Equals(b);
 		}
 
