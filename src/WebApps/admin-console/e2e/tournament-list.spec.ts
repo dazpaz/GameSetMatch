@@ -19,10 +19,10 @@ test('tournament list page should show a table with tournaments', async ({ page 
 
 test('tournament list should have the correct columns', async ({ page }) => {
   await page.goto('http://localhost:4200');
-  const headers = page.locator('table thead th');
-  await expect(headers).toHaveCount(9);
-  await expect(headers).toHaveText(['Tournament', 'Location', 'Level', 'Surface',
-    'Men\'s Singles', 'Women\'s Singles', 'Men\'s Doubles', 'Women\'s Doubles', 'Mixed Doubles' ]);
+          const headers = page.locator('table thead th');
+          await expect(headers).toHaveCount(9);
+          await expect(headers).toHaveText(['Tournament', 'Location', 'Level', 'Surface',
+            'Men\'s Singles', 'Women\'s Singles', 'Men\'s Doubles', 'Women\'s Doubles', 'Mixed Doubles' ]);
 });
 
 test('tournament list should show the eight active tournaments', async ({ page }) => {
