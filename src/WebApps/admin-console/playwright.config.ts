@@ -9,12 +9,12 @@ import { defineBddConfig } from 'playwright-bdd';
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-//const testDir = defineBddConfig({
-//  features: './e2e/features/**/*.feature',
-//  steps: './e2e/steps/**/*.ts',
-//});
+const testDir = defineBddConfig({
+  features: './e2e/features/**/*.feature',
+  steps: './e2e/steps/**/*.ts',
+});
 
-const testDir = 'e2e'
+// const testDir = 'e2e'
 
 /**
  * See https://playwright.dev/docs/test-configuration.
