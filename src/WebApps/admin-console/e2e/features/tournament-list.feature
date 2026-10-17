@@ -4,7 +4,7 @@ Feature: Can view the Tournaments that make up the Tour
   I want to view a list of tournaments
   So that I can see the tournaments that are part of the tour
 
-# The list of tournaments is shown and contains the desired information  
+  # The list of tournaments is shown and contains the desired information  
 
   Scenario: Can view the list of the active tournaments
     Given I access the tour management page
@@ -24,7 +24,7 @@ Feature: Can view the Tournaments that make up the Tour
       | Women's Doubles |
       | Mixed Doubles   |
 
-# Able to select if inactive tournaments are shown
+  # Able to select if inactive tournaments are shown
 
   Scenario: Initially inactive tournaments are not shown
     Given I access the tour management page
@@ -50,7 +50,7 @@ Feature: Can view the Tournaments that make up the Tour
     And I have inactive tournaments shown
     Then Inactive tournaments are marked with a visual indicator
 
-# Sorting the tournament list
+  # Sorting the tournament list
 
   Scenario: Initially the tournaments are sorted by title ascending
     Given I access the tour management page
@@ -71,7 +71,7 @@ Feature: Can view the Tournaments that make up the Tour
     When I sort the tournament list by surface
     Then the list of tournaments is sorted by surface
 
-# Filtering the tournament list
+  # Filtering the tournament list
 
   Scenario: Can filter the tournament list by level
     Given I access the tour management page
