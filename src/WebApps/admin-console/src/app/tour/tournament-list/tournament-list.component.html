@@ -1,16 +1,18 @@
 @if (errorMessage(); as message) {
   <div class="alert alert-danger" role="alert">{{ message }}</div>
 }
-<div class="form-check form-switch mb-3">
-  <input
-    class="form-check-input"
-    type="checkbox"
-    role="switch"
-    id="showInactive"
-    [checked]="showInactive()"
-    (change)="showInactive.set($any($event.target).checked)"
-  />
-  <label class="form-check-label" for="showInactive">Show inactive tournaments</label>
+<div class="d-flex justify-content-end mb-3">
+  <div class="form-check form-switch mb-0">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      role="switch"
+      id="showInactive"
+      [checked]="showInactive()"
+      (change)="showInactive.set($any($event.target).checked)"
+    />
+    <label class="form-check-label" for="showInactive">Show inactive tournaments</label>
+  </div>
 </div>
 <section class="card shadow-sm">
   <div class="card-body p-0">
