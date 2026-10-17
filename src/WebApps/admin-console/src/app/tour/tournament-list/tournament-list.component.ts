@@ -24,8 +24,12 @@ export class TournamentListComponent {
     { initialValue: [] as readonly ITournament[] },
   );
 
+  readonly showInactive = signal(false);
+
   readonly tournaments = computed(() =>
-    this.allTournaments().filter((tournament) => tournament.isActive),
+    this.showInactive()
+      ? this.allTournaments()
+      : this.allTournaments().filter((tournament) => tournament.isActive),
   );
 
   readonly tournamentLevelLabels: Readonly<Record<TournamentLevel, string>> = {
