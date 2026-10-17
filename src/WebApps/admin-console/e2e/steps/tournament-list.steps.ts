@@ -20,6 +20,22 @@ Then('The list should contain the correct set of tournaments', async ({ page }) 
   await expect(rows).toHaveCount(8);
 });
 
+Then('The option for showing inactive tournaments is {string}', async ({ page }, state: string) => {
+  if (state !== 'on' && state !== 'off') {
+    throw new Error(`Unsupported inactive tournaments option state: ${state}`);
+  }
+
+  const showInactiveOption = page.getByRole('checkbox', {
+    name: 'Show inactive tournaments',
+  });
+  await expect(showInactiveOption).toBeChecked({ checked: state === 'on' });
+});
+
+Then('Inactive tournaments are not shown', async ({ page }) => {
+  const rows = page.locator('table tbody tr');
+  await expect(rows).toHaveCount(8);
+});
+
 Then('The properties of each tournament are displayed', async ({ page }, dataTable: DataTable) => {
   const headers = page.locator('table thead th');
   const expectedHeaders = dataTable.raw().map(([header]) => header);

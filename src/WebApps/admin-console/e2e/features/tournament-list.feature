@@ -26,7 +26,6 @@ Feature: Can view the Tournaments that make up the Tour
 
   # Able to select if inactive tournaments are shown
 
-  @skip
   Scenario: Initially inactive tournaments are not shown
     Given I access the tour management page
     Then The option for showing inactive tournaments is "off"
