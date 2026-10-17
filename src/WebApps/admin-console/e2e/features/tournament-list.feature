@@ -92,6 +92,4 @@ Feature: Can view the Tournaments that make up the Tour
     Given I access the tour management page
     When I filter the tournament list by Events
     Then Only the tournaments that contain the selected event are shown
-
-
-
+    
