@@ -21,6 +21,7 @@ Then('The list should contain the correct set of tournaments', async ({ page }) 
 });
 
 const ACTIVE_TOURNAMENT_COUNT = 8;
+const TOTAL_TOURNAMENT_COUNT = 10;
 
 const showInactiveOption = (page: Page) =>
   page.getByRole('switch', { name: 'Show inactive tournaments' });
@@ -48,9 +49,7 @@ Given('I have inactive tournaments shown', async ({ page }) => {
 
 Then('Inactive tournaments are included in the list', async ({ page }) => {
   const rows = page.locator('table tbody tr');
-  await expect
-    .poll(async () => rows.count())
-    .toBeGreaterThan(ACTIVE_TOURNAMENT_COUNT);
+  await expect(rows).toHaveCount(TOTAL_TOURNAMENT_COUNT);
 });
 
 Then('Inactive tournaments are not shown', async ({ page }) => {
