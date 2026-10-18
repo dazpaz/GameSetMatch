@@ -63,3 +63,17 @@ Then('The properties of each tournament are displayed', async ({ page }, dataTab
   await expect(headers).toHaveCount(expectedHeaders.length);
   await expect(headers).toHaveText(expectedHeaders);
 });
+
+When('I search the tournament list using a search text', async ({ page }) => {
+  const searchBox = page.getByRole('searchbox', { name: 'Search tournaments' });
+  await searchBox.fill('open');
+  await searchBox.press('Enter');
+});
+
+Then('Only the tournaments whose title contains the search text are shown', async ({ page }) => {
+  const rows = page.locator('table tbody tr');
+  await expect(rows).toHaveCount(4);
+  for (const row of await rows.all()) {
+    await expect(row.locator('th[scope="row"]')).toContainText(/open/i);
+  }
+});

@@ -51,6 +51,13 @@ Feature: Can view the Tournaments that make up the Tour
     And I have inactive tournaments shown
     Then Inactive tournaments are marked with a visual indicator
 
+  # can search the tournament list by title
+
+  Scenario: Can search the tournament list by title
+    Given I access the tour management page
+    When I search the tournament list using a search text
+    Then Only the tournaments whose title contains the search text are shown
+    
   # Sorting the tournament list
 
   @skip
@@ -89,12 +96,6 @@ Feature: Can view the Tournaments that make up the Tour
     Given I access the tour management page
     When I filter the tournament list by surface
     Then Only the tournaments of the filtered surfaces are shown
-
-  @skip
-  Scenario: Can filter the tournament list by tournament title text
-    Given I access the tour management page
-    When I filter the tournament list by title text
-    Then Only the tournaments of where title contains the filter text are hown
 
   @skip
   Scenario: Filter by Events included in the tournament
