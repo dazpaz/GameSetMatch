@@ -67,6 +67,44 @@ describe('TournamentListComponent', () => {
     expect(renderedTournamentTitles).toEqual(['Active Open']);
   });
 
+  describe('show inactive tournaments switch', () => {
+    const titles = () =>
+      Array.from(
+        (fixture.nativeElement as HTMLElement).querySelectorAll('tbody th[scope="row"]'),
+        (cell) => cell.textContent?.trim(),
+      );
+    const toggle = () =>
+      (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>('#showInactive')!;
+
+    it('should render a labelled Bootstrap switch above the table, initially off', () => {
+      const element: HTMLElement = fixture.nativeElement;
+      fixture.detectChanges();
+
+      expect(toggle().type).toBe('checkbox');
+      expect(toggle().getAttribute('role')).toBe('switch');
+      expect(toggle().classList).toContain('form-check-input');
+      expect(toggle().closest('.form-switch')).not.toBeNull();
+      expect(toggle().checked).toBe(false);
+      expect(element.querySelector('label[for="showInactive"]')?.textContent?.trim()).toBe(
+        'Show inactive tournaments',
+      );
+      expect(
+        toggle().compareDocumentPosition(element.querySelector('table')!) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+    });
+
+    it('should show all tournaments when switched on and hide inactive when switched off', () => {
+      toggle().click();
+      fixture.detectChanges();
+      expect(titles()).toEqual(['Active Open', 'Inactive Open']);
+
+      toggle().click();
+      fixture.detectChanges();
+      expect(titles()).toEqual(['Active Open']);
+    });
+  });
+
   it('should not show an error alert when the request succeeds', () => {
     expect(fixture.nativeElement.querySelector('.alert.alert-danger')).toBeNull();
     expect(component.errorMessage()).toBeNull();

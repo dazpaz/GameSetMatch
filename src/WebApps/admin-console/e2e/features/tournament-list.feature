@@ -26,13 +26,11 @@ Feature: Can view the Tournaments that make up the Tour
 
   # Able to select if inactive tournaments are shown
 
-  @skip
   Scenario: Initially inactive tournaments are not shown
     Given I access the tour management page
     Then The option for showing inactive tournaments is "off"
     And Inactive tournaments are not shown
 
-  @skip
   Scenario: Can opt to show inactive tournaments
     Given I access the tour management page
     And The option for showing inactive tournaments is "off"
@@ -40,7 +38,6 @@ Feature: Can view the Tournaments that make up the Tour
     Then The option for showing inactive tournaments is "on"
     And Inactive tournaments are included in the list
 
-  @skip
   Scenario: With inactive tournaments shown, can hide them again
     Given I access the tour management page
     And I have inactive tournaments shown
