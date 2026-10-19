@@ -25,12 +25,21 @@ export class TournamentListComponent {
   );
 
   readonly showInactive = signal(false);
+  readonly searchTerm = signal('');
 
-  readonly tournaments = computed(() =>
-    this.showInactive()
-      ? this.allTournaments()
-      : this.allTournaments().filter((tournament) => tournament.isActive),
-  );
+  private readonly appliedSearchTerm = signal('');
+
+  search(): void {
+    this.appliedSearchTerm.set(this.searchTerm().trim().toLowerCase());
+  }
+
+  readonly tournaments = computed(() => {
+    return this.allTournaments().filter(
+      (tournament) =>
+        (this.showInactive() || tournament.isActive) &&
+        tournament.title.toLowerCase().includes(this.appliedSearchTerm()),
+    );
+  });
 
   readonly tournamentLevelLabels: Readonly<Record<TournamentLevel, string>> = {
     [TournamentLevel.GsmSlam]: 'GSM Slam',
