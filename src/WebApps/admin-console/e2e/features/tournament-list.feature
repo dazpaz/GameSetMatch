@@ -57,6 +57,17 @@ Feature: Can view the Tournaments that make up the Tour
     Given I access the tour management page
     When I search the tournament list using a search text
     Then Only the tournaments whose title contains the search text are shown
+
+  Scenario: Search text is case insensitive
+    Given I access the tour management page
+    When I search the tournament list using a search text with different casing
+    Then Only the tournaments whose title contains the search text are shown
+
+  Scenario: Clear the search text shows all tournaments
+    Given I access the tour management page
+    And I have searched the tournament list using a search text
+    When I clear the search text
+    Then All tournaments are shown
     
   # Sorting the tournament list
 
