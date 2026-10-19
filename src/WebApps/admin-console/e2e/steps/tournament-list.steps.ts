@@ -77,3 +77,26 @@ Then('Only the tournaments whose title contains the search text are shown', asyn
     await expect(row.locator('th[scope="row"]')).toContainText(/open/i);
   }
 });
+
+Given('I have searched the tournament list using a search text', async ({ page }) => {
+  const searchBox = page.getByRole('searchbox', { name: 'Search tournaments' });
+  await searchBox.fill('OpEn');
+  await searchBox.press('Enter');
+});
+
+When('I clear the search text', async ({ page }) => {
+  const searchBox = page.getByRole('searchbox', { name: 'Search tournaments' });
+  await searchBox.clear();
+  await searchBox.press('Enter');
+});
+
+Then('All tournaments are shown', async ({ page }) => {
+  const rows = page.locator('table tbody tr');
+  await expect(rows).toHaveCount(ACTIVE_TOURNAMENT_COUNT);
+});
+
+When('I search the tournament list using a search text with different casing', async ({ page }) => {
+  const searchBox = page.getByRole('searchbox', { name: 'Search tournaments' });
+  await searchBox.fill('OpEn');
+  await searchBox.press('Enter');
+});
