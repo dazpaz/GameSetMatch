@@ -50,7 +50,15 @@
         <tbody>
           @for (tournament of tournaments(); track tournament.tournamentId) {
             <tr>
-              <th scope="row">{{ tournament.title }}</th>
+              <th scope="row">
+                <span class="tournament-title">{{ tournament.title }}</span>
+                @if (!tournament.isActive) {
+                  <span class="ms-2 text-secondary">
+                    <i class="fa-solid fa-ban" aria-hidden="true"></i>
+                    <span class="visually-hidden">Inactive</span>
+                  </span>
+                }
+              </th>
               <td>{{ tournament.location }}</td>
               <td>{{ tournamentLevelLabels[tournament.level] }}</td>
               <td>{{ surfaceLabels[tournament.surface] }}</td>
