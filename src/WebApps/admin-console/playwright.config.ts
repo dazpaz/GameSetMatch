@@ -11,7 +11,7 @@ import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
   features: './e2e/features/**/*.feature',
-  steps: './e2e/steps/**/*.ts',
+  steps: ['./e2e/steps/**/*.ts', './e2e/fixtures.ts'],
 });
 
 // const testDir = 'e2e'
@@ -54,7 +54,7 @@ export default defineConfig({
 
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: { ...devices['Desktop Safari'], ignoreHTTPSErrors: true },
     },
 
     /* Test against mobile viewports. */

@@ -17,8 +17,8 @@ export class TournamentListPage {
     this.page = page;
     this.table = this.page.locator('table');
     this.title = this.page.locator('h1');
-    this.tableHeaders = this.table.locator('table thead th');
-    this.tableRows = this.table.locator('table tbody tr');
+    this.tableHeaders = this.table.locator('thead th');
+    this.tableRows = this.table.locator('tbody tr:has(th[scope="row"])');
     this.showInactiveOption = this.page.getByRole('switch', { name: 'Show inactive tournaments' });
     this.searchBox = this.page.getByRole('searchbox', { name: 'Search tournaments' });
   }
@@ -51,12 +51,7 @@ export class TournamentListPage {
   }
 
   public async GetTournamentTitles(): Promise<string[]> {
-    const count = await this.tableRows.count();
-    const titles: string[] = [];
-    for (let i = 0; i < count; i++) {
-      titles.push(await this.tableRows.nth(i).locator('th[scope="row"]').innerText());
-    }
-    return titles;
+    return await this.table.locator('tbody th[scope="row"]').allInnerTexts();
   }
 
   public async ToggleShowInactiveOption(state: boolean): Promise<void> {
