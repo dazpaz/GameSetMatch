@@ -5,7 +5,8 @@ import { test } from '../fixtures';
 const { Given, When, Then } = createBdd(test);
 
 const ACTIVE_TOURNAMENT_COUNT = 8;
-const TOTAL_TOURNAMENT_COUNT = 10;
+const INACTIVE_TOURNAMENT_COUNT = 2;
+const TOTAL_TOURNAMENT_COUNT = ACTIVE_TOURNAMENT_COUNT + INACTIVE_TOURNAMENT_COUNT;
 
 Given('I access the tour management page', async ({ tournamentListPage }) => {
   await tournamentListPage.NavigateToTournamentListPage();
@@ -89,3 +90,10 @@ When(
     await tournamentListPage.SetSearchBoxValue('OpEn');
   },
 );
+
+Then('Inactive tournaments are marked with a visual indicator', async ({ tournamentListPage }) => {
+  const withIndicators = await tournamentListPage.GetTournamentsWithInactiveIndicator();
+  expect(withIndicators.length).toBe(INACTIVE_TOURNAMENT_COUNT);
+  expect(withIndicators[0]).toBe('Stuttgart Open');
+  expect(withIndicators[1]).toBe('Miami Open');
+});

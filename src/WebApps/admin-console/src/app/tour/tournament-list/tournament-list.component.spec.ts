@@ -60,7 +60,7 @@ describe('TournamentListComponent', () => {
 
   it('should render only active tournaments', () => {
     const renderedTournamentTitles = Array.from(
-      fixture.nativeElement.querySelectorAll('tbody th[scope="row"]'),
+      fixture.nativeElement.querySelectorAll('tbody th[scope="row"] .tournament-title'),
       (cell: Element) => cell.textContent?.trim()
     );
 
@@ -70,7 +70,9 @@ describe('TournamentListComponent', () => {
   describe('show inactive tournaments switch', () => {
     const titles = () =>
       Array.from(
-        (fixture.nativeElement as HTMLElement).querySelectorAll('tbody th[scope="row"]'),
+        (fixture.nativeElement as HTMLElement).querySelectorAll(
+          'tbody th[scope="row"] .tournament-title',
+        ),
         (cell) => cell.textContent?.trim(),
       );
     const toggle = () =>
@@ -102,6 +104,22 @@ describe('TournamentListComponent', () => {
       toggle().click();
       fixture.detectChanges();
       expect(titles()).toEqual(['Active Open']);
+    });
+
+    it('should show an accessible disabled icon only for inactive tournaments', () => {
+      toggle().click();
+      fixture.detectChanges();
+
+      const rows = (fixture.nativeElement as HTMLElement).querySelectorAll(
+        'tbody th[scope="row"]',
+      );
+      const activeRow = rows[0];
+      const inactiveRow = rows[1];
+
+      expect(activeRow.querySelector('.fa-ban')).toBeNull();
+      expect(inactiveRow.querySelector('.fa-solid.fa-ban')).not.toBeNull();
+      expect(inactiveRow.querySelector('.fa-ban')?.getAttribute('aria-hidden')).toBe('true');
+      expect(inactiveRow.querySelector('.visually-hidden')?.textContent?.trim()).toBe('Inactive');
     });
   });
 

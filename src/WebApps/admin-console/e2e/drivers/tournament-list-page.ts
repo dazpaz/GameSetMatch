@@ -46,6 +46,21 @@ export class TournamentListPage {
     return titles;
   }
 
+  public async GetTournamentsWithInactiveIndicator(): Promise<string[]> {
+    const rows = this.tableRows;
+    const count = await rows.count();
+    const titles: string[] = [];
+    for (let i = 0; i < count; i++) {
+      const row = rows.nth(i);
+      const indicator = row.locator('span:has(i.fa-ban)');
+      if (await indicator.count() > 0) {
+        const title = await row.locator('th[scope="row"] .tournament-title').innerText();
+        titles.push(title);
+      }
+    }
+    return titles;
+  }
+
   public async GetTournamentCount(): Promise<number> {
     return await this.tableRows.count();
   }
