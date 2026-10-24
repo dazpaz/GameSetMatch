@@ -1,4 +1,4 @@
-﻿using DomainDesign.Common;
+using Common.DomainDesign;
 using Ardalis.GuardClauses;
 
 namespace TourManagement.Domain.TournamentAggregate

@@ -1,4 +1,4 @@
-﻿namespace DomainDesign.Common.UnitTest
+namespace Common.DomainDesign.UnitTests
 {
 	public sealed class EntityIdTest
 	{

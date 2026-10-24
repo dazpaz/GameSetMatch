@@ -1,4 +1,4 @@
-﻿namespace DomainDesign.Common
+namespace Common.DomainDesign
 {
 	public abstract class ValueObject<T> : IEquatable<T> where T : ValueObject<T>
 	{

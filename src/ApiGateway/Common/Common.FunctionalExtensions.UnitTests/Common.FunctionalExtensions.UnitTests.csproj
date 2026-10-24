@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DomainDesign.Common\DomainDesign.Common.csproj" />
+    <ProjectReference Include="..\Common.FunctionalExtensions\Common.FunctionalExtensions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
