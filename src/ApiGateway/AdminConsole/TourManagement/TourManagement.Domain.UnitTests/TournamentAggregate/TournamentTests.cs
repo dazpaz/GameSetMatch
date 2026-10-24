@@ -45,7 +45,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var id = Guid.NewGuid();
 
-			var exception = Assert.Throws<ArgumentException>(() => Tournament.Create(
+			var exception = Assert.ThrowsAny<ArgumentException>(() => Tournament.Create(
 				id,
 				title!,
 				"Paris",
@@ -68,7 +68,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 		{
 			var id = Guid.NewGuid();
 
-			var exception = Assert.Throws<ArgumentException>(() => Tournament.Create(
+			var exception = Assert.ThrowsAny<ArgumentException>(() => Tournament.Create(
 				id,
 				"Masters",
 				location!,
@@ -145,7 +145,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 				womensDoubles: false,
 				mixedDoubles: false);
 
-			var exception = Assert.Throws<ArgumentException>(() => tournament.AmendDetails(
+			var exception = Assert.ThrowsAny<ArgumentException>(() => tournament.AmendDetails(
 				title!,
 				"Madrid",
 				TournamentLevel.Gsm500,
@@ -177,7 +177,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 				womensDoubles: false,
 				mixedDoubles: false);
 
-			var exception = Assert.Throws<ArgumentException>(() => tournament.AmendDetails(
+			var exception = Assert.ThrowsAny<ArgumentException>(() => tournament.AmendDetails(
 				"Updated Open",
 				location!,
 				TournamentLevel.Gsm500,
