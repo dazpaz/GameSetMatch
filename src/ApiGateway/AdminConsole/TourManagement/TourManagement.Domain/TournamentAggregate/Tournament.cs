@@ -14,6 +14,7 @@ namespace TourManagement.Domain.TournamentAggregate
 		public bool MensDoubles { get; private set; }
 		public bool WomensDoubles { get; private set; }
 		public bool MixedDoubles { get; private set; }
+		public bool IsActive { get; private set; }
 
 		protected Tournament()
 		{
@@ -40,7 +41,8 @@ namespace TourManagement.Domain.TournamentAggregate
 				WomensSingles = womensSingles,
 				MensDoubles = mensDoubles,
 				WomensDoubles = womensDoubles,
-				MixedDoubles = mixedDoubles
+				MixedDoubles = mixedDoubles,
+				IsActive = true
 			};
 		}
 
@@ -60,6 +62,16 @@ namespace TourManagement.Domain.TournamentAggregate
 			MensDoubles = mensDoubles;
 			WomensDoubles = womensDoubles;
 			MixedDoubles = mixedDoubles;
+		}
+
+		public void SetActive()
+		{
+			IsActive = true;
+		}
+
+		public void SetDeactive()
+		{
+			IsActive = false;
 		}
 	}
 }

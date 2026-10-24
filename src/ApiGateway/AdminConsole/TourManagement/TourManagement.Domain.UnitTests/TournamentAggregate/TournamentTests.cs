@@ -35,6 +35,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 			Assert.True(tournament.MensDoubles);
 			Assert.False(tournament.WomensDoubles);
 			Assert.True(tournament.MixedDoubles);
+			Assert.True(tournament.IsActive);
 		}
 
 		[Theory]
@@ -125,6 +126,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 			Assert.True(tournament.MensDoubles);
 			Assert.True(tournament.WomensDoubles);
 			Assert.True(tournament.MixedDoubles);
+			Assert.True(tournament.IsActive);
 		}
 
 		[Theory]
@@ -189,6 +191,47 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 				mixedDoubles: true));
 
 			Assert.Equal("location", exception.ParamName);
+		}
+
+		[Fact]
+		public void SetDeactive_SetsIsActiveToFalse()
+		{
+			var tournament = Tournament.Create(
+				Guid.NewGuid(),
+				"Initial Open",
+				"Rome",
+				TournamentLevel.Gsm250,
+				Surface.Clay,
+				mensSingles: true,
+				womensSingles: true,
+				mensDoubles: false,
+				womensDoubles: false,
+				mixedDoubles: false);
+
+			tournament.SetDeactive();
+
+			Assert.False(tournament.IsActive);
+		}
+
+		[Fact]
+		public void SetActive_WhenDeactive_SetsIsActiveToTrue()
+		{
+			var tournament = Tournament.Create(
+				Guid.NewGuid(),
+				"Initial Open",
+				"Rome",
+				TournamentLevel.Gsm250,
+				Surface.Clay,
+				mensSingles: true,
+				womensSingles: true,
+				mensDoubles: false,
+				womensDoubles: false,
+				mixedDoubles: false);
+
+			tournament.SetDeactive(); 
+			tournament.SetActive();
+
+			Assert.True(tournament.IsActive);
 		}
 	}
 }
