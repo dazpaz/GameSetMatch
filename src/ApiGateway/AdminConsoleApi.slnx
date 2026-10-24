@@ -1,1 +1,6 @@
-<Solution />
+<Solution>
+  <Folder Name="/Common/">
+    <Project Path="Common/DomainDesign.Common.UnitTest/DomainDesign.Common.UnitTest.csproj" />
+    <Project Path="Common/DomainDesign.Common/DomainDesign.Common.csproj" />
+  </Folder>
+</Solution>
