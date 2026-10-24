@@ -88,17 +88,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 		public void AmendDetails_WithValidValues_UpdatesAllMutableProperties_AndKeepsIdUnchanged()
 		{
 			var id = Guid.NewGuid();
-			var tournament = Tournament.Create(
-				id,
-				"Initial Open",
-				"Rome",
-				TournamentLevel.Gsm250,
-				Surface.Clay,
-				mensSingles: true,
-				womensSingles: true,
-				mensDoubles: false,
-				womensDoubles: false,
-				mixedDoubles: false);
+			var tournament = CreateTestTournament(id);
 
 			var amendedTitle = "Championship Finals";
 			var amendedLocation = "New York";
@@ -135,17 +125,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 		[InlineData("   ")]
 		public void AmendDetails_WithInvalidTitle_ThrowsArgumentException(string? title)
 		{
-			var tournament = Tournament.Create(
-				Guid.NewGuid(),
-				"Initial Open",
-				"Rome",
-				TournamentLevel.Gsm250,
-				Surface.Clay,
-				mensSingles: true,
-				womensSingles: true,
-				mensDoubles: false,
-				womensDoubles: false,
-				mixedDoubles: false);
+			var tournament = CreateTestTournament();
 
 			var exception = Assert.ThrowsAny<ArgumentException>(() => tournament.AmendDetails(
 				title!,
@@ -167,17 +147,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 		[InlineData("\t")]
 		public void AmendDetails_WithInvalidLocation_ThrowsArgumentException(string? location)
 		{
-			var tournament = Tournament.Create(
-				Guid.NewGuid(),
-				"Initial Open",
-				"Rome",
-				TournamentLevel.Gsm250,
-				Surface.Clay,
-				mensSingles: true,
-				womensSingles: true,
-				mensDoubles: false,
-				womensDoubles: false,
-				mixedDoubles: false);
+			var tournament = CreateTestTournament();
 
 			var exception = Assert.ThrowsAny<ArgumentException>(() => tournament.AmendDetails(
 				"Updated Open",
@@ -196,17 +166,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void SetDeactive_SetsIsActiveToFalse()
 		{
-			var tournament = Tournament.Create(
-				Guid.NewGuid(),
-				"Initial Open",
-				"Rome",
-				TournamentLevel.Gsm250,
-				Surface.Clay,
-				mensSingles: true,
-				womensSingles: true,
-				mensDoubles: false,
-				womensDoubles: false,
-				mixedDoubles: false);
+			var tournament = CreateTestTournament();
 
 			tournament.SetDeactive();
 
@@ -216,8 +176,18 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 		[Fact]
 		public void SetActive_WhenDeactive_SetsIsActiveToTrue()
 		{
-			var tournament = Tournament.Create(
-				Guid.NewGuid(),
+			var tournament = CreateTestTournament();
+
+			tournament.SetDeactive(); 
+			tournament.SetActive();
+
+			Assert.True(tournament.IsActive);
+		}
+
+		private static Tournament CreateTestTournament(Guid? id = null)
+		{
+			return Tournament.Create(
+				id ?? Guid.NewGuid(),
 				"Initial Open",
 				"Rome",
 				TournamentLevel.Gsm250,
@@ -227,11 +197,6 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 				mensDoubles: false,
 				womensDoubles: false,
 				mixedDoubles: false);
-
-			tournament.SetDeactive(); 
-			tournament.SetActive();
-
-			Assert.True(tournament.IsActive);
 		}
 	}
 }
