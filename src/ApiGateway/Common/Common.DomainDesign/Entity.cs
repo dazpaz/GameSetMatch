@@ -1,4 +1,4 @@
-﻿namespace DomainDesign.Common
+namespace Common.DomainDesign
 {
 	public abstract class Entity<TId> : IEquatable<Entity<TId>>
 	{

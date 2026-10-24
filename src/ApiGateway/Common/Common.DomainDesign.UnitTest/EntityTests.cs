@@ -1,4 +1,4 @@
-﻿namespace DomainDesign.Common.UnitTest
+namespace Common.DomainDesign.UnitTest
 {
 	public class EntityTests
 	{

@@ -1,7 +1,7 @@
 <Solution>
   <Folder Name="/Common/">
-    <Project Path="Common/DomainDesign.Common.UnitTest/DomainDesign.Common.UnitTest.csproj" />
-    <Project Path="Common/DomainDesign.Common/DomainDesign.Common.csproj" />
+    <Project Path="Common/Common.DomainDesign.UnitTest/Common.DomainDesign.UnitTest.csproj" />
+    <Project Path="Common/Common.DomainDesign/Common.DomainDesign.csproj" />
     <Project Path="Common/FunctionalExtensions.UnitTests/FunctionalExtensions.UnitTests.csproj" Id="468c708c-3e41-42a5-aef5-f53f33d3c2e5" />
     <Project Path="Common/FunctionalExtensions/FunctionalExtensions.csproj" />
   </Folder>
