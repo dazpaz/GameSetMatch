@@ -1,4 +1,5 @@
 ﻿using DomainDesign.Common;
+using Ardalis.GuardClauses;
 
 namespace TourManagement.Domain.TournamentAggregate
 {
@@ -26,14 +27,8 @@ namespace TourManagement.Domain.TournamentAggregate
 			TournamentLevel level, Surface surface, bool mensSingles, bool womensSingles,
 			bool mensDoubles, bool womensDoubles, bool mixedDoubles)
 		{
-			if (string.IsNullOrWhiteSpace(title))
-			{
-				throw new ArgumentException("Title cannot be null or whitespace.", nameof(title));
-			}
-			if (string.IsNullOrWhiteSpace(location))
-			{
-				throw new ArgumentException("Location cannot be null or whitespace.", nameof(location));
-			}
+			title = Guard.Against.NullOrWhiteSpace(title);
+			location = Guard.Against.NullOrWhiteSpace(location);
 
 			return new Tournament(id)
 			{
@@ -53,14 +48,8 @@ namespace TourManagement.Domain.TournamentAggregate
 			TournamentLevel level, Surface surface, bool mensSingles, bool womensSingles,
 			bool mensDoubles, bool womensDoubles, bool mixedDoubles)
 		{
-			if (string.IsNullOrWhiteSpace(title))
-			{
-				throw new ArgumentException("Title cannot be null or whitespace.", nameof(title));
-			}
-			if (string.IsNullOrWhiteSpace(location))
-			{
-				throw new ArgumentException("Location cannot be null or whitespace.", nameof(location));
-			}
+			title = Guard.Against.NullOrWhiteSpace(title);
+			location = Guard.Against.NullOrWhiteSpace(location);
 
 			Title = title;
 			Location = location;
