@@ -48,5 +48,29 @@ namespace TourManagement.Domain.TournamentAggregate
 				MixedDoubles = mixedDoubles
 			};
 		}
+
+		public void AmendDetails(string title, string location,
+			TournamentLevel level, Surface surface, bool mensSingles, bool womensSingles,
+			bool mensDoubles, bool womensDoubles, bool mixedDoubles)
+		{
+			if (string.IsNullOrWhiteSpace(title))
+			{
+				throw new ArgumentException("Title cannot be null or whitespace.", nameof(title));
+			}
+			if (string.IsNullOrWhiteSpace(location))
+			{
+				throw new ArgumentException("Location cannot be null or whitespace.", nameof(location));
+			}
+
+			Title = title;
+			Location = location;
+			Level = level;
+			Surface = surface;
+			MensSingles = mensSingles;
+			WomensSingles = womensSingles;
+			MensDoubles = mensDoubles;
+			WomensDoubles = womensDoubles;
+			MixedDoubles = mixedDoubles;
+		}
 	}
 }

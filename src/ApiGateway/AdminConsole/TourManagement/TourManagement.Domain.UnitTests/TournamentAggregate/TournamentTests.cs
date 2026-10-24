@@ -82,5 +82,113 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 
 			Assert.Equal("location", exception.ParamName);
 		}
+
+		[Fact]
+		public void AmendDetails_WithValidValues_UpdatesAllMutableProperties_AndKeepsIdUnchanged()
+		{
+			var id = Guid.NewGuid();
+			var tournament = Tournament.Create(
+				id,
+				"Initial Open",
+				"Rome",
+				TournamentLevel.Gsm250,
+				Surface.Clay,
+				mensSingles: true,
+				womensSingles: true,
+				mensDoubles: false,
+				womensDoubles: false,
+				mixedDoubles: false);
+
+			var amendedTitle = "Championship Finals";
+			var amendedLocation = "New York";
+			var amendedLevel = TournamentLevel.Gsm1000;
+			var amendedSurface = Surface.Hard;
+
+			tournament.AmendDetails(
+				amendedTitle,
+				amendedLocation,
+				amendedLevel,
+				amendedSurface,
+				mensSingles: false,
+				womensSingles: true,
+				mensDoubles: true,
+				womensDoubles: true,
+				mixedDoubles: true);
+
+			Assert.Equal(id, tournament.Id);
+			Assert.Equal(amendedTitle, tournament.Title);
+			Assert.Equal(amendedLocation, tournament.Location);
+			Assert.Equal(amendedLevel, tournament.Level);
+			Assert.Equal(amendedSurface, tournament.Surface);
+			Assert.False(tournament.MensSingles);
+			Assert.True(tournament.WomensSingles);
+			Assert.True(tournament.MensDoubles);
+			Assert.True(tournament.WomensDoubles);
+			Assert.True(tournament.MixedDoubles);
+		}
+
+		[Theory]
+		[InlineData(null)]
+		[InlineData("")]
+		[InlineData("   ")]
+		public void AmendDetails_WithInvalidTitle_ThrowsArgumentException(string? title)
+		{
+			var tournament = Tournament.Create(
+				Guid.NewGuid(),
+				"Initial Open",
+				"Rome",
+				TournamentLevel.Gsm250,
+				Surface.Clay,
+				mensSingles: true,
+				womensSingles: true,
+				mensDoubles: false,
+				womensDoubles: false,
+				mixedDoubles: false);
+
+			var exception = Assert.Throws<ArgumentException>(() => tournament.AmendDetails(
+				title!,
+				"Madrid",
+				TournamentLevel.Gsm500,
+				Surface.Grass,
+				mensSingles: false,
+				womensSingles: false,
+				mensDoubles: true,
+				womensDoubles: true,
+				mixedDoubles: true));
+
+			Assert.Equal("title", exception.ParamName);
+		}
+
+		[Theory]
+		[InlineData(null)]
+		[InlineData("")]
+		[InlineData("\t")]
+		public void AmendDetails_WithInvalidLocation_ThrowsArgumentException(string? location)
+		{
+			var tournament = Tournament.Create(
+				Guid.NewGuid(),
+				"Initial Open",
+				"Rome",
+				TournamentLevel.Gsm250,
+				Surface.Clay,
+				mensSingles: true,
+				womensSingles: true,
+				mensDoubles: false,
+				womensDoubles: false,
+				mixedDoubles: false);
+
+			var exception = Assert.Throws<ArgumentException>(() => tournament.AmendDetails(
+				"Updated Open",
+				location!,
+				TournamentLevel.Gsm500,
+				Surface.Grass,
+				mensSingles: false,
+				womensSingles: false,
+				mensDoubles: true,
+				womensDoubles: true,
+				mixedDoubles: true));
+
+			Assert.Equal("location", exception.ParamName);
+		}
 	}
 }
