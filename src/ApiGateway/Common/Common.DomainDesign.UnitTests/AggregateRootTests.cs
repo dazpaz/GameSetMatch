@@ -1,4 +1,4 @@
-namespace Common.DomainDesign.UnitTest
+namespace Common.DomainDesign.UnitTests
 {
 	public class AggregateRootTests
 	{
