@@ -1,5 +1,5 @@
 
-namespace AdminConsoleApi
+namespace AdminConsole.WebApi
 {
 	public class Program
 	{
@@ -35,7 +35,6 @@ namespace AdminConsoleApi
 			app.UseHttpsRedirection();
 
 			app.UseAuthorization();
-
 
 			app.MapControllers();
 

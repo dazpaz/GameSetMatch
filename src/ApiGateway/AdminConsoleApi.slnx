@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Common/">
+    <Project Path="Common/DomainDesign.Common.UnitTest/DomainDesign.Common.UnitTest.csproj" />
+    <Project Path="Common/DomainDesign.Common/DomainDesign.Common.csproj" />
+  </Folder>
+  <Folder Name="/TourManagement/">
+    <Project Path="AdminConsole/TourManagement/TourManagement.Domain.UnitTests/TourManagement.Domain.UnitTests.csproj" Id="aa8865ba-edb2-4d0b-8595-493f4dcfdf25" />
+    <Project Path="AdminConsole/TourManagement/TourManagement.Domain/TourManagement.Domain.csproj" Id="8ecbaa4d-0c81-41fd-b3d7-88350e1f5a0c" />
+  </Folder>
+  <Project Path="AdminConsole/AdminConsole.WebApi/AdminConsole.WebApi.csproj" />
+</Solution>
