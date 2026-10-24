@@ -34,8 +34,7 @@
 
 		public override bool Equals(object? otherObject)
 		{
-			var other = otherObject as Entity<TId>;
-			if (other is null) return false;
+			if (otherObject is not Entity<TId> other) return false;
 			if (ReferenceEquals(this, other)) return true;
 			if (GetType() != other.GetType()) return false;
 			if (Equals(Id, default(TId)) || Equals(other.Id, default(TId))) return false;
