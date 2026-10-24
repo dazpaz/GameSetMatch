@@ -2,8 +2,8 @@
   <Folder Name="/Common/">
     <Project Path="Common/Common.DomainDesign.UnitTests/Common.DomainDesign.UnitTests.csproj" />
     <Project Path="Common/Common.DomainDesign/Common.DomainDesign.csproj" />
-    <Project Path="Common/FunctionalExtensions.UnitTests/FunctionalExtensions.UnitTests.csproj" Id="468c708c-3e41-42a5-aef5-f53f33d3c2e5" />
-    <Project Path="Common/FunctionalExtensions/FunctionalExtensions.csproj" />
+    <Project Path="Common/Common.FunctionalExtensions.UnitTests/Common.FunctionalExtensions.UnitTests.csproj" />
+    <Project Path="Common/Common.FunctionalExtensions/Common.FunctionalExtensions.csproj" />
   </Folder>
   <Folder Name="/TourManagement/">
     <Project Path="AdminConsole/TourManagement/TourManagement.Domain.UnitTests/TourManagement.Domain.UnitTests.csproj" Id="aa8865ba-edb2-4d0b-8595-493f4dcfdf25" />

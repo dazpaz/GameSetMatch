@@ -1,4 +1,4 @@
-﻿namespace FunctionalExtensions
+﻿namespace Common.FunctionalExtensions
 {
 	public class Result : IResult
 	{

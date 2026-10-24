@@ -1,4 +1,4 @@
-﻿namespace FunctionalExtensions.UnitTests
+﻿namespace Common.FunctionalExtensions.UnitTests
 {
 	public class GenericResultTests
 	{
