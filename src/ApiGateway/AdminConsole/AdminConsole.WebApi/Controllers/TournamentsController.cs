@@ -1,22 +1,54 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using TourManagement.Application.Commands;
+using TourManagement.Application.Handlers;
+using TourManagement.Contract;
 
 namespace AdminConsole.WebApi.Controllers
 {
 	[ApiController]
 	[Route("[controller]")]
-	public class TournamentsController : ControllerBase
+	public class TournamentsController(ITournamentCommandHandler tournamentCommandHandler) : ControllerBase
 	{
+		private readonly ITournamentCommandHandler _tournamentCommandHandler = tournamentCommandHandler;
+
 		[HttpGet(Name = "GetTournaments")]
-		public IEnumerable<TournamentDto> Get()
+		public IEnumerable<TempTournamentDto> GetTournaments()
 		{
 			return GetTournamentList();
 		}
 
-		private static List<TournamentDto> GetTournamentList()
+		[HttpGet("{id}", Name = "GetTournament")]
+		public ActionResult<TempTournamentDto> GetTournament(Guid id)
+		{
+			var tournament = GetTournamentList().FirstOrDefault(t => t.Id == id);
+			if (tournament == null)
+			{
+				return NotFound();
+			}
+			return Ok(tournament);
+		}
+
+		[HttpPost(Name = "CreateTournament")]
+		public ActionResult Create(AddTournamentDto addTournamentDto)
+		{
+			var command = AddTournamentCommand.CreateFromDto(addTournamentDto);
+			if (command.IsFailure) return BadRequest(command.Error);
+
+			var result = _tournamentCommandHandler.HandleAddTournamentCommand(command.Value);
+			if (result.IsFailure) return BadRequest(result.Error);
+
+			return result.IsSuccess
+				? CreatedAtAction(nameof(GetTournament), new { id = result.Value }, null)
+				: BadRequest(result.Error);
+
+		}
+
+		private static List<TempTournamentDto> GetTournamentList()
 		{
 			return
 			[
-				new TournamentDto
+				new TempTournamentDto
 				{
 					Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
 					Title = "Australian Open",
@@ -30,7 +62,7 @@ namespace AdminConsole.WebApi.Controllers
 					MixedDoubles = true,
 					IsActive = true
 				},
-				new TournamentDto
+				new TempTournamentDto
 				{
 					Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
 					Title = "Monte-Carlo Masters",
@@ -44,7 +76,7 @@ namespace AdminConsole.WebApi.Controllers
 					MixedDoubles = false,
 					IsActive = true
 				},
-				new TournamentDto
+				new TempTournamentDto
 				{
 					Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
 					Title = "Wimbledon",
@@ -58,7 +90,7 @@ namespace AdminConsole.WebApi.Controllers
 					MixedDoubles = true,
 					IsActive = true
 				},
-				new TournamentDto
+				new	TempTournamentDto
 				{
 					Id = Guid.Parse("00000000-0000-0000-0000-000000000004"),
 					Title = "Indian Wells Masters",
@@ -72,7 +104,7 @@ namespace AdminConsole.WebApi.Controllers
 					MixedDoubles = false,
 					IsActive = true
 				},
-				new TournamentDto
+				new TempTournamentDto
 				{
 					Id = Guid.Parse("00000000-0000-0000-0000-000000000005"),
 					Title = "Barcelona Open",
@@ -86,7 +118,7 @@ namespace AdminConsole.WebApi.Controllers
 					MixedDoubles = false,
 					IsActive = true
 				},
-				new TournamentDto
+				new TempTournamentDto
 				{
 					Id = Guid.Parse("00000000-0000-0000-0000-000000000006"),
 					Title = "Stuttgart Open",
@@ -100,7 +132,7 @@ namespace AdminConsole.WebApi.Controllers
 					MixedDoubles = false,
 					IsActive = false
 				},
-				new TournamentDto
+				new TempTournamentDto
 				{
 					Id = Guid.Parse("00000000-0000-0000-0000-000000000007"),
 					Title = "Lyon Challenger",
@@ -114,7 +146,7 @@ namespace AdminConsole.WebApi.Controllers
 					MixedDoubles = false,
 					IsActive = true
 				},
-				new TournamentDto
+				new TempTournamentDto
 				{
 					Id = Guid.Parse("00000000-0000-0000-0000-000000000008"),
 					Title = "US Open",
@@ -128,7 +160,7 @@ namespace AdminConsole.WebApi.Controllers
 					MixedDoubles = true,
 					IsActive = true
 				},
-				new TournamentDto
+				new TempTournamentDto
 				{
 					Id = Guid.Parse("00000000-0000-0000-0000-000000000009"),
 					Title = "French Open",
@@ -142,7 +174,7 @@ namespace AdminConsole.WebApi.Controllers
 					MixedDoubles = true,
 					IsActive = true
 				},
-				new TournamentDto
+				new TempTournamentDto
 				{
 					Id = Guid.Parse("00000000-0000-0000-0000-00000000000a"),
 					Title = "Miami Open",
@@ -177,7 +209,7 @@ namespace AdminConsole.WebApi.Controllers
 		Gsm125
 	}
 
-	public class TournamentDto
+	public class TempTournamentDto
 	{
 		public Guid Id { get; set; }
 		public required string Title { get; set; }

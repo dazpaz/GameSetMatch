@@ -1,5 +1,6 @@
 ﻿using Common.FunctionalExtensions;
 using TourManagement.Common;
+using TourManagement.Contract;
 
 namespace TourManagement.Application.Commands
 {
@@ -30,7 +31,7 @@ namespace TourManagement.Application.Commands
 			MixedDoubles = mixedDoubles;
 		}
 
-		public static Result<AddTournamentCommand> Create(string title, string location, 
+		public static Result<AddTournamentCommand> Create(string title, string location,
 			TournamentLevel level, Surface surface, bool mensSingles, bool womensSingles,
 			bool mensDoubles, bool womensDoubles, bool mixedDoubles)
 		{
@@ -50,6 +51,13 @@ namespace TourManagement.Application.Commands
 				mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles);
 
 			return Result<AddTournamentCommand>.Success(command);
+		}
+
+		public static Result<AddTournamentCommand> CreateFromDto(AddTournamentDto dto)
+		{
+			return Create(dto.Title, dto.Location, dto.Level, dto.Surface,
+				dto.MensSingles, dto.WomensSingles, dto.MensDoubles,
+				dto.WomensDoubles, dto.MixedDoubles);
 		}
 	}
 }

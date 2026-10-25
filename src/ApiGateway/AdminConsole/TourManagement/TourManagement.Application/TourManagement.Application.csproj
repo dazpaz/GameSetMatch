@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Common.DomainDesign\Common.DomainDesign.csproj" />
     <ProjectReference Include="..\..\..\Common\Common.FunctionalExtensions\Common.FunctionalExtensions.csproj" />
+    <ProjectReference Include="..\TourManagement.Contract\TourManagement.Contract.csproj" />
     <ProjectReference Include="..\TourManagement.Domain\TourManagement.Domain.csproj" />
   </ItemGroup>
 

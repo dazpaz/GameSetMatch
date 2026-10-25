@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TourManagement.Application\TourManagement.Application.csproj" />
+    <ProjectReference Include="..\TourManagement.Common\TourManagement.Common.csproj" />
+    <ProjectReference Include="..\TourManagement.Domain\TourManagement.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

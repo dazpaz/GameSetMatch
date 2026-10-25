@@ -1,4 +1,9 @@
 
+using TourManagement.Application.Handlers;
+using TourManagement.Application.Repository;
+using TourManagement.Data;
+using TourManagement.Domain.TournamentAggregate;
+
 namespace AdminConsole.WebApi
 {
 	public class Program
@@ -8,6 +13,9 @@ namespace AdminConsole.WebApi
 			var builder = WebApplication.CreateBuilder(args);
 
 			// Add services to the container.
+			builder.Services.AddScoped<ITournamentCommandHandler, TournamentCommandHandler>();
+			builder.Services.AddScoped<IUnitOfWork, TempUnitOfWork>();
+			builder.Services.AddScoped<IRepository<Tournament, Guid>, TempRepository>();
 
 			builder.Services.AddControllers();
 			// Allow cross-origin requests from Angular dev server
@@ -22,7 +30,7 @@ namespace AdminConsole.WebApi
 			builder.Services.AddOpenApi();
 
 			var app = builder.Build();
-
+			
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
 			{
