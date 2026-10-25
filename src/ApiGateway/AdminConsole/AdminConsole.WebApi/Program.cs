@@ -35,6 +35,10 @@ namespace AdminConsole.WebApi
 			if (app.Environment.IsDevelopment())
 			{
 				app.MapOpenApi();
+				app.UseSwaggerUI(options =>
+				{
+					options.SwaggerEndpoint("/openapi/v1.json", "AdminConsole API v1");
+				});
 			}
 
 			// Enable CORS policy for requests from the Angular dev server

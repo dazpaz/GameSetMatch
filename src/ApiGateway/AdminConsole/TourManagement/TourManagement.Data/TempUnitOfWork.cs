@@ -5,7 +5,12 @@ namespace TourManagement.Data
 {
 	public class TempUnitOfWork : IUnitOfWork
 	{
-		public IRepository<Tournament, Guid> TournamentRepository => throw new NotImplementedException();
+		public IRepository<Tournament, Guid> TournamentRepository => GetTournamentRepository();
+
+		private IRepository<Tournament, Guid> GetTournamentRepository()
+		{
+			return new TempRepository();
+		}
 
 		public void SaveChanges()
 		{
