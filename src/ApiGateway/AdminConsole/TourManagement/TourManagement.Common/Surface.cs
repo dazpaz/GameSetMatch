@@ -1,4 +1,4 @@
-﻿namespace TourManagement.Domain.TournamentAggregate
+﻿namespace TourManagement.Common
 {
 	public enum Surface
 	{

@@ -1,3 +1,4 @@
+using TourManagement.Common;
 using TourManagement.Domain.TournamentAggregate;
 
 namespace TourManagement.Domain.UnitTests.TournamentAggregate

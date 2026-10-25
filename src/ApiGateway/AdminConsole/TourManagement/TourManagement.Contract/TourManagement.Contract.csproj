@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TourManagement.Common\TourManagement.Common.csproj" />
+  </ItemGroup>
+
 </Project>
