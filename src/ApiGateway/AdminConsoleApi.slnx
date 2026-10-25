@@ -6,6 +6,10 @@
     <Project Path="Common/Common.FunctionalExtensions/Common.FunctionalExtensions.csproj" />
   </Folder>
   <Folder Name="/TourManagement/">
+    <Project Path="AdminConsole/TourManagement/TourManagement.Application/TourManagement.Application.csproj" Id="b1935404-c356-4031-be07-e196840a0461" />
+    <Project Path="AdminConsole/TourManagement/TourManagement.Common/TourManagement.Common.csproj" />
+    <Project Path="AdminConsole/TourManagement/TourManagement.Contract/TourManagement.Contract.csproj" Id="bbf4ba6b-07d4-44e4-b205-95e0f9057b20" />
+    <Project Path="AdminConsole/TourManagement/TourManagement.Data/TourManagement.Data.csproj" Id="7be4bcd6-f86f-427e-8beb-912bb892b694" />
     <Project Path="AdminConsole/TourManagement/TourManagement.Domain.UnitTests/TourManagement.Domain.UnitTests.csproj" Id="aa8865ba-edb2-4d0b-8595-493f4dcfdf25" />
     <Project Path="AdminConsole/TourManagement/TourManagement.Domain/TourManagement.Domain.csproj" Id="8ecbaa4d-0c81-41fd-b3d7-88350e1f5a0c" />
   </Folder>

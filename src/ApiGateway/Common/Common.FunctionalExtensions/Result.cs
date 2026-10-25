@@ -18,9 +18,9 @@
 			IsSuccess = isSuccess;
 			Error = error;
 		}
-		public static Result Success() => new Result(true, string.Empty);
+		public static Result Success() => new(true, string.Empty);
 
-		public static Result Failure(string error) => new Result(false, error);
+		public static Result Failure(string error) => new(false, error);
 	}
 
 	public class Result<T> : Result, IResult<T>
@@ -32,8 +32,8 @@
 			Value = value;
 		}
 
-		public static Result<T> Success(T value) => new Result<T>(true, string.Empty, value);
+		public static Result<T> Success(T value) => new(true, string.Empty, value);
 
-		public static new Result<T> Failure(string error) => new Result<T>(false, error, default!);
+		public static new Result<T> Failure(string error) => new(false, error, default!);
 	}
 }

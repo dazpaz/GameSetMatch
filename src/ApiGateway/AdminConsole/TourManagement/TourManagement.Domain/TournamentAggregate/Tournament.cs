@@ -1,5 +1,6 @@
 using Common.DomainDesign;
 using Ardalis.GuardClauses;
+using TourManagement.Common;
 
 namespace TourManagement.Domain.TournamentAggregate
 {

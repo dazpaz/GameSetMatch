@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Common.DomainDesign\Common.DomainDesign.csproj" />
+    <ProjectReference Include="..\..\..\Common\Common.FunctionalExtensions\Common.FunctionalExtensions.csproj" />
+    <ProjectReference Include="..\TourManagement.Contract\TourManagement.Contract.csproj" />
+    <ProjectReference Include="..\TourManagement.Domain\TourManagement.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
