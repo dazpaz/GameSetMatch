@@ -13,5 +13,6 @@
     <Project Path="AdminConsole/TourManagement/TourManagement.Domain.UnitTests/TourManagement.Domain.UnitTests.csproj" Id="aa8865ba-edb2-4d0b-8595-493f4dcfdf25" />
     <Project Path="AdminConsole/TourManagement/TourManagement.Domain/TourManagement.Domain.csproj" Id="8ecbaa4d-0c81-41fd-b3d7-88350e1f5a0c" />
   </Folder>
+  <Project Path="AdminConsole/AdminConsole.DbMigration/AdminConsole.DbMigration.csproj" Id="e43a0b7b-8feb-4b34-b7b7-7db46d637f67" />
   <Project Path="AdminConsole/AdminConsole.WebApi/AdminConsole.WebApi.csproj" />
 </Solution>
