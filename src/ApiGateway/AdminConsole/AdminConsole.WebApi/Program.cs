@@ -12,10 +12,16 @@ namespace AdminConsole.WebApi
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
+			var connectionString = builder.Configuration.GetConnectionString("TourManagementDatabase");
+			if (string.IsNullOrEmpty(connectionString))
+			{
+				throw new InvalidOperationException("Connection string 'TourManagementDatabase' not found.");
+			}
+
 			// Add services to the container.
 			builder.Services.AddScoped<ITournamentCommandHandler, TournamentCommandHandler>();
-			builder.Services.AddScoped<IUnitOfWork, TempUnitOfWork>();
-			builder.Services.AddScoped<IRepository<Tournament, Guid>, TempRepository>();
+			builder.Services.AddTourManagementData(connectionString);
+
 
 			builder.Services.AddControllers();
 
