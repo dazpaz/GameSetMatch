@@ -22,7 +22,7 @@ namespace AdminConsole.WebApi
 
 			// Add services to the container.
 			builder.Services.AddScoped<ITournamentCommandHandler, TournamentCommandHandler>();
-			builder.Services.AddScoped<IQueryTournament, QueryTournament>();
+			builder.Services.AddScoped<IQueryTournament>(_ => new QueryTournament(connectionString));
 			builder.Services.AddTourManagementData(connectionString);
 
 
