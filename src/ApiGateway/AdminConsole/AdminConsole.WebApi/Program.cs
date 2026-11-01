@@ -1,8 +1,10 @@
 
 using TourManagement.Application.Handlers;
+using TourManagement.Application.Queries;
 using TourManagement.Application.Repository;
 using TourManagement.Data;
 using TourManagement.Domain.TournamentAggregate;
+using TourManagement.Query;
 
 namespace AdminConsole.WebApi
 {
@@ -20,6 +22,7 @@ namespace AdminConsole.WebApi
 
 			// Add services to the container.
 			builder.Services.AddScoped<ITournamentCommandHandler, TournamentCommandHandler>();
+			builder.Services.AddScoped<IQueryTournament>(_ => new QueryTournament(connectionString));
 			builder.Services.AddTourManagementData(connectionString);
 
 

@@ -15,8 +15,8 @@ namespace AdminConsole.DbMigration
 				.AddEnvironmentVariables()
 				.Build();
 
-			var connectionString = configuration.GetConnectionString("AdminConsole")
-				?? throw new InvalidOperationException("Connection string 'AdminConsole' not found.");
+			var connectionString = configuration.GetConnectionString("TourManagementDatabase")
+				?? throw new InvalidOperationException("Connection string 'TourManagementDatabase' not found.");
 
 			var options = new DbContextOptionsBuilder<TourManagementDbContext>()
 				.UseSqlServer(connectionString, b => b.MigrationsAssembly(typeof(TourManagementDbContextFactory).Assembly.FullName))
