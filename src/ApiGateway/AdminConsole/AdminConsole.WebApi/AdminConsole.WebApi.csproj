@@ -18,6 +18,7 @@
     <ProjectReference Include="..\TourManagement\TourManagement.Application\TourManagement.Application.csproj" />
     <ProjectReference Include="..\TourManagement\TourManagement.Contract\TourManagement.Contract.csproj" />
     <ProjectReference Include="..\TourManagement\TourManagement.Data\TourManagement.Data.csproj" />
+    <ProjectReference Include="..\TourManagement\TourManagement.Query\TourManagement.Query.csproj" />
   </ItemGroup>
 
 </Project>
