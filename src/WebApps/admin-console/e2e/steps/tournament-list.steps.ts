@@ -94,6 +94,6 @@ When(
 Then('Inactive tournaments are marked with a visual indicator', async ({ tournamentListPage }) => {
   const withIndicators = await tournamentListPage.GetTournamentsWithInactiveIndicator();
   expect(withIndicators.length).toBe(INACTIVE_TOURNAMENT_COUNT);
-  expect(withIndicators[0]).toBe('Stuttgart Open');
-  expect(withIndicators[1]).toBe('Miami Open');
+  expect(withIndicators[0]).toBe('Miami Open');
+  expect(withIndicators[1]).toBe('Stuttgart Open');
 });

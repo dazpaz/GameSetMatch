@@ -52,7 +52,7 @@ export class TournamentListPage {
     const titles: string[] = [];
     for (let i = 0; i < count; i++) {
       const row = rows.nth(i);
-      const indicator = row.locator('span:has(i.fa-ban)');
+      const indicator = row.locator('td').first().locator('span:has(i.fa-ban)');
       if (await indicator.count() > 0) {
         const title = await row.locator('th[scope="row"] .tournament-title').innerText();
         titles.push(title);
