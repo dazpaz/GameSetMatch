@@ -191,6 +191,40 @@ describe('TournamentListComponent', () => {
   it('should not show an error alert when the request succeeds', () => {
     expect(fixture.nativeElement.querySelector('.alert.alert-danger')).toBeNull();
     expect(component.errorMessage()).toBeNull();
+    expect(component.isLoading()).toBe(false);
+  });
+});
+
+describe('TournamentListComponent while loading', () => {
+  let fixture: ComponentFixture<TournamentListComponent>;
+  let http: HttpTestingController;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [TournamentListComponent],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
+
+    http = TestBed.inject(HttpTestingController);
+    fixture = TestBed.createComponent(TournamentListComponent);
+    fixture.detectChanges();
+  });
+
+  afterEach(() => http.verify());
+
+  it('should show a loading message until the request completes', () => {
+    expect(fixture.componentInstance.isLoading()).toBe(true);
+    expect(fixture.nativeElement.querySelector('tbody')?.textContent).toContain(
+      'Loading tournaments...',
+    );
+
+    http.expectOne('https://localhost:7288/tournaments').flush([]);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.isLoading()).toBe(false);
+    expect(fixture.nativeElement.querySelector('tbody')?.textContent).toContain(
+      'No tournaments are available.',
+    );
   });
 });
 
@@ -220,6 +254,7 @@ describe('TournamentListComponent when the API returns an error', () => {
 
   it('should set the error message', () => {
     expect(component.errorMessage()).toBe('Unable to retrieve tournaments');
+    expect(component.isLoading()).toBe(false);
   });
 
   it('should show a red Bootstrap alert above the table', () => {

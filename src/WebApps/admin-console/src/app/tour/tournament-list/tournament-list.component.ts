@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, of } from 'rxjs';
+import { catchError, finalize, of } from 'rxjs';
 import { ITournament, Surface, TournamentLevel } from './tournament';
 import { TournamentService } from './tournament-service';
 
@@ -14,6 +14,7 @@ type SortDirection = 'ascending' | 'descending';
 })
 export class TournamentListComponent {
   readonly errorMessage = signal<string | null>(null);
+  readonly isLoading = signal(true);
 
   private readonly allTournaments = toSignal(
     inject(TournamentService)
@@ -23,6 +24,7 @@ export class TournamentListComponent {
           this.errorMessage.set('Unable to retrieve tournaments');
           return of([] as readonly ITournament[]);
         }),
+        finalize(() => this.isLoading.set(false)),
       ),
     { initialValue: [] as readonly ITournament[] },
   );

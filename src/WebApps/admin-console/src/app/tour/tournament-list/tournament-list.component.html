@@ -90,32 +90,38 @@
           </tr>
         </thead>
         <tbody>
-          @for (tournament of tournaments(); track tournament.tournamentId) {
+          @if (isLoading()) {
             <tr>
-              <th scope="row" class="fw-normal">
-                <span class="tournament-title">{{ tournament.title }}</span>
-                @if (!tournament.isActive) {
-                  <span class="ms-2 text-secondary">
-                    <i class="fa-solid fa-ban" aria-hidden="true"></i>
-                    <span class="visually-hidden">Inactive</span>
-                  </span>
-                }
-              </th>
-              <td>{{ tournament.location }}</td>
-              <td>{{ tournamentLevelLabels[tournament.level] }}</td>
-              <td>{{ surfaceLabels[tournament.surface] }}</td>
-              <td>{{ tournament.mensSingles ? 'Yes' : 'No' }}</td>
-              <td>{{ tournament.womensSingles ? 'Yes' : 'No' }}</td>
-              <td>{{ tournament.mensDoubles ? 'Yes' : 'No' }}</td>
-              <td>{{ tournament.womensDoubles ? 'Yes' : 'No' }}</td>
-              <td>{{ tournament.mixedDoubles ? 'Yes' : 'No' }}</td>
+              <td colspan="10" class="text-center text-muted py-4">Loading tournaments...</td>
             </tr>
-          } @empty {
-            <tr>
-              <td colspan="10" class="text-center text-muted py-4">
-                No tournaments are available.
-              </td>
-            </tr>
+          } @else {
+            @for (tournament of tournaments(); track tournament.tournamentId) {
+              <tr>
+                <th scope="row" class="fw-normal">
+                  <span class="tournament-title">{{ tournament.title }}</span>
+                  @if (!tournament.isActive) {
+                    <span class="ms-2 text-secondary">
+                      <i class="fa-solid fa-ban" aria-hidden="true"></i>
+                      <span class="visually-hidden">Inactive</span>
+                    </span>
+                  }
+                </th>
+                <td>{{ tournament.location }}</td>
+                <td>{{ tournamentLevelLabels[tournament.level] }}</td>
+                <td>{{ surfaceLabels[tournament.surface] }}</td>
+                <td>{{ tournament.mensSingles ? 'Yes' : 'No' }}</td>
+                <td>{{ tournament.womensSingles ? 'Yes' : 'No' }}</td>
+                <td>{{ tournament.mensDoubles ? 'Yes' : 'No' }}</td>
+                <td>{{ tournament.womensDoubles ? 'Yes' : 'No' }}</td>
+                <td>{{ tournament.mixedDoubles ? 'Yes' : 'No' }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="10" class="text-center text-muted py-4">
+                  No tournaments are available.
+                </td>
+              </tr>
+            }
           }
         </tbody>
       </table>
