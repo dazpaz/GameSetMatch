@@ -22,6 +22,11 @@ const DEFAULT_SORT: SortState = { column: 'tournament', direction: 'ascending' }
 export class TournamentListComponent {
   readonly errorMessage = signal<string | null>(null);
   readonly isLoading = signal(true);
+  readonly showInactive = signal(false);
+  readonly searchTerm = signal('');
+  readonly sort = signal<SortState>(DEFAULT_SORT);
+
+  private readonly appliedSearchTerm = signal('');
 
   private readonly allTournaments = toSignal(
     inject(TournamentService)
@@ -35,12 +40,6 @@ export class TournamentListComponent {
       ),
     { initialValue: [] as readonly ITournament[] },
   );
-
-  readonly showInactive = signal(false);
-  readonly searchTerm = signal('');
-  readonly sort = signal<SortState>(DEFAULT_SORT);
-
-  private readonly appliedSearchTerm = signal('');
 
   search(): void {
     this.appliedSearchTerm.set(this.searchTerm().trim().toLowerCase());
@@ -64,6 +63,7 @@ export class TournamentListComponent {
     );
 
     const { column, direction } = this.sort();
+
     return [...filteredTournaments].sort((first, second) => {
       const firstValue = this.sortValue(first, column);
       const secondValue = this.sortValue(second, column);
@@ -75,8 +75,19 @@ export class TournamentListComponent {
     });
   });
 
+  private sortValue(tournament: ITournament, column: SortColumn): string | number {
+    switch (column) {
+      case 'tournament':
+        return tournament.title;
+      case 'level':
+        return tournament.level;
+      case 'surface':
+        return this.surfaceLabels[tournament.surface];
+    }
+  }
+
   readonly tournamentLevelLabels: Readonly<Record<TournamentLevel, string>> = {
-    [TournamentLevel.GsmSlam]: 'GSM Slam',
+    [TournamentLevel.GsmSlam]: 'Grand Slam',
     [TournamentLevel.Gsm1000]: 'Masters 1000',
     [TournamentLevel.Gsm500]: 'GSM 500',
     [TournamentLevel.Gsm250]: 'GSM 250',
@@ -89,15 +100,4 @@ export class TournamentListComponent {
     [Surface.Hard]: 'Hard',
     [Surface.Carpet]: 'Carpet',
   };
-
-  private sortValue(tournament: ITournament, column: SortColumn): string | number {
-    switch (column) {
-      case 'tournament':
-        return tournament.title;
-      case 'level':
-        return tournament.level;
-      case 'surface':
-        return this.surfaceLabels[tournament.surface];
-    }
-  }
 }
