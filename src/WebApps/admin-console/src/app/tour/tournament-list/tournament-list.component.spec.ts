@@ -91,8 +91,14 @@ describe('TournamentListComponent', () => {
 
       expect(titles()).toEqual(['Active Open', 'Inactive Open']);
       expect(sortButton('Tournament').textContent?.trim()).toBe('Tournament ↑');
+      expect(sortButton('Tournament').classList).toContain('fw-bold');
       expect(sortButton('Tournament').closest('th')?.getAttribute('aria-sort')).toBe('ascending');
       expect(sortButton('Level').closest('th')?.hasAttribute('aria-sort')).toBe(false);
+      expect(
+        (fixture.nativeElement as HTMLElement)
+          .querySelector('tbody th[scope="row"]')
+          ?.classList.contains('fw-normal'),
+      ).toBe(true);
     });
 
     it('should sort by Level and reverse the order when clicked again', () => {

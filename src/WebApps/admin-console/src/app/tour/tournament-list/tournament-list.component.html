@@ -41,7 +41,7 @@
               [attr.aria-sort]="sort().column === 'tournament' ? sort().direction : null"
             >
               <button
-                class="btn btn-link p-0 text-body text-decoration-none"
+                class="btn btn-link p-0 text-body text-decoration-none fw-bold"
                 type="button"
                 aria-label="Sort by Tournament"
                 (click)="sortBy('tournament')"
@@ -55,7 +55,7 @@
             <th scope="col">Location</th>
             <th scope="col" [attr.aria-sort]="sort().column === 'level' ? sort().direction : null">
               <button
-                class="btn btn-link p-0 text-body text-decoration-none"
+                class="btn btn-link p-0 text-body text-decoration-none fw-bold"
                 type="button"
                 aria-label="Sort by Level"
                 (click)="sortBy('level')"
@@ -71,7 +71,7 @@
               [attr.aria-sort]="sort().column === 'surface' ? sort().direction : null"
             >
               <button
-                class="btn btn-link p-0 text-body text-decoration-none"
+                class="btn btn-link p-0 text-body text-decoration-none fw-bold"
                 type="button"
                 aria-label="Sort by Surface"
                 (click)="sortBy('surface')"
@@ -92,7 +92,7 @@
         <tbody>
           @for (tournament of tournaments(); track tournament.tournamentId) {
             <tr>
-              <th scope="row">
+              <th scope="row" class="fw-normal">
                 <span class="tournament-title">{{ tournament.title }}</span>
                 @if (!tournament.isActive) {
                   <span class="ms-2 text-secondary">
