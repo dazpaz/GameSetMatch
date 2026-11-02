@@ -14,7 +14,8 @@ Feature: Can view the Tournaments that make up the Tour
   Scenario: The details of each tournament is shown
     Given I access the tour management page
     Then The properties of each tournament are displayed
-      | Tournament      |
+      | Tournament ↑    |
+      |                 |
       | Location        |
       | Level           |
       | Surface         |

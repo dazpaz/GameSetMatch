@@ -180,11 +180,20 @@ describe('TournamentListComponent', () => {
       const rows = (fixture.nativeElement as HTMLElement).querySelectorAll('tbody th[scope="row"]');
       const activeRow = rows[0];
       const inactiveRow = rows[1];
+      const statusHeader = (fixture.nativeElement as HTMLElement).querySelectorAll('thead th')[1];
+      const activeStatusCell = activeRow.nextElementSibling;
+      const inactiveStatusCell = inactiveRow.nextElementSibling;
 
-      expect(activeRow.querySelector('.fa-ban')).toBeNull();
-      expect(inactiveRow.querySelector('.fa-solid.fa-ban')).not.toBeNull();
-      expect(inactiveRow.querySelector('.fa-ban')?.getAttribute('aria-hidden')).toBe('true');
-      expect(inactiveRow.querySelector('.visually-hidden')?.textContent?.trim()).toBe('Inactive');
+      expect(statusHeader.textContent?.trim()).toBe('');
+      expect(statusHeader.getAttribute('aria-label')).toBe('Tournament status');
+      expect(activeStatusCell?.querySelector('.fa-ban')).toBeNull();
+      expect(inactiveStatusCell?.querySelector('.fa-solid.fa-ban')).not.toBeNull();
+      expect(inactiveStatusCell?.querySelector('.fa-ban')?.getAttribute('aria-hidden')).toBe(
+        'true',
+      );
+      expect(inactiveStatusCell?.querySelector('.visually-hidden')?.textContent?.trim()).toBe(
+        'Inactive',
+      );
     });
   });
 
