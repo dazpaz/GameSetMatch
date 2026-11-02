@@ -4,6 +4,9 @@ import { catchError, of } from 'rxjs';
 import { ITournament, Surface, TournamentLevel } from './tournament';
 import { TournamentService } from './tournament-service';
 
+type SortColumn = 'tournament' | 'level' | 'surface';
+type SortDirection = 'ascending' | 'descending';
+
 @Component({
   imports: [],
   selector: 'ac-tournament-list',
@@ -26,6 +29,10 @@ export class TournamentListComponent {
 
   readonly showInactive = signal(false);
   readonly searchTerm = signal('');
+  readonly sort = signal<{ column: SortColumn; direction: SortDirection }>({
+    column: 'tournament',
+    direction: 'ascending',
+  });
 
   private readonly appliedSearchTerm = signal('');
 
@@ -33,12 +40,30 @@ export class TournamentListComponent {
     this.appliedSearchTerm.set(this.searchTerm().trim().toLowerCase());
   }
 
+  sortBy(column: SortColumn): void {
+    this.sort.update((currentSort) => ({
+      column,
+      direction:
+        currentSort.column === column && currentSort.direction === 'ascending'
+          ? 'descending'
+          : 'ascending',
+    }));
+  }
+
   readonly tournaments = computed(() => {
-    return this.allTournaments().filter(
+    const filteredTournaments = this.allTournaments().filter(
       (tournament) =>
         (this.showInactive() || tournament.isActive) &&
         tournament.title.toLowerCase().includes(this.appliedSearchTerm()),
     );
+
+    const { column, direction } = this.sort();
+    return [...filteredTournaments].sort((first, second) => {
+      const firstValue = this.sortValue(first, column);
+      const secondValue = this.sortValue(second, column);
+      const comparison = firstValue.localeCompare(secondValue);
+      return direction === 'ascending' ? comparison : -comparison;
+    });
   });
 
   readonly tournamentLevelLabels: Readonly<Record<TournamentLevel, string>> = {
@@ -55,4 +80,15 @@ export class TournamentListComponent {
     [Surface.Hard]: 'Hard',
     [Surface.Carpet]: 'Carpet',
   };
+
+  private sortValue(tournament: ITournament, column: SortColumn): string {
+    switch (column) {
+      case 'tournament':
+        return tournament.title;
+      case 'level':
+        return this.tournamentLevelLabels[tournament.level];
+      case 'surface':
+        return this.surfaceLabels[tournament.surface];
+    }
+  }
 }

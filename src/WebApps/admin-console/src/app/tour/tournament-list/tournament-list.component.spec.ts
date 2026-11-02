@@ -61,10 +61,71 @@ describe('TournamentListComponent', () => {
   it('should render only active tournaments', () => {
     const renderedTournamentTitles = Array.from(
       fixture.nativeElement.querySelectorAll('tbody th[scope="row"] .tournament-title'),
-      (cell: Element) => cell.textContent?.trim()
+      (cell: Element) => cell.textContent?.trim(),
     );
 
     expect(renderedTournamentTitles).toEqual(['Active Open']);
+  });
+
+  describe('sorting tournaments', () => {
+    const titles = () =>
+      Array.from(
+        (fixture.nativeElement as HTMLElement).querySelectorAll(
+          'tbody th[scope="row"] .tournament-title',
+        ),
+        (cell) => cell.textContent?.trim(),
+      );
+    const sortButton = (column: string) =>
+      (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>(
+        `button[aria-label="Sort by ${column}"]`,
+      )!;
+    const showAllTournaments = () => {
+      (fixture.nativeElement as HTMLElement)
+        .querySelector<HTMLInputElement>('#showInactive')!
+        .click();
+      fixture.detectChanges();
+    };
+
+    it('should start sorted by Tournament ascending', () => {
+      showAllTournaments();
+
+      expect(titles()).toEqual(['Active Open', 'Inactive Open']);
+      expect(sortButton('Tournament').textContent?.trim()).toBe('Tournament ↑');
+      expect(sortButton('Tournament').closest('th')?.getAttribute('aria-sort')).toBe('ascending');
+      expect(sortButton('Level').closest('th')?.hasAttribute('aria-sort')).toBe(false);
+    });
+
+    it('should sort by Level and reverse the order when clicked again', () => {
+      showAllTournaments();
+      sortButton('Level').click();
+      fixture.detectChanges();
+
+      expect(titles()).toEqual(['Inactive Open', 'Active Open']);
+      expect(sortButton('Level').textContent?.trim()).toBe('Level ↑');
+      expect(sortButton('Level').closest('th')?.getAttribute('aria-sort')).toBe('ascending');
+
+      sortButton('Level').click();
+      fixture.detectChanges();
+
+      expect(titles()).toEqual(['Active Open', 'Inactive Open']);
+      expect(sortButton('Level').textContent?.trim()).toBe('Level ↓');
+      expect(sortButton('Level').closest('th')?.getAttribute('aria-sort')).toBe('descending');
+    });
+
+    it('should sort by Surface and reverse the order when clicked again', () => {
+      showAllTournaments();
+      sortButton('Surface').click();
+      fixture.detectChanges();
+
+      expect(titles()).toEqual(['Inactive Open', 'Active Open']);
+      expect(sortButton('Surface').textContent?.trim()).toBe('Surface ↑');
+
+      sortButton('Surface').click();
+      fixture.detectChanges();
+
+      expect(titles()).toEqual(['Active Open', 'Inactive Open']);
+      expect(sortButton('Surface').textContent?.trim()).toBe('Surface ↓');
+    });
   });
 
   describe('show inactive tournaments switch', () => {
@@ -110,9 +171,7 @@ describe('TournamentListComponent', () => {
       toggle().click();
       fixture.detectChanges();
 
-      const rows = (fixture.nativeElement as HTMLElement).querySelectorAll(
-        'tbody th[scope="row"]',
-      );
+      const rows = (fixture.nativeElement as HTMLElement).querySelectorAll('tbody th[scope="row"]');
       const activeRow = rows[0];
       const inactiveRow = rows[1];
 
@@ -165,9 +224,7 @@ describe('TournamentListComponent when the API returns an error', () => {
     expect(alert?.getAttribute('role')).toBe('alert');
 
     const table = element.querySelector('table')!;
-    expect(
-      alert!.compareDocumentPosition(table) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
+    expect(alert!.compareDocumentPosition(table) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it('should render no tournaments', () => {
