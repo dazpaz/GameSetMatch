@@ -61,7 +61,10 @@ export class TournamentListComponent {
     return [...filteredTournaments].sort((first, second) => {
       const firstValue = this.sortValue(first, column);
       const secondValue = this.sortValue(second, column);
-      const comparison = firstValue.localeCompare(secondValue);
+      const comparison =
+        typeof firstValue === 'number' && typeof secondValue === 'number'
+          ? firstValue - secondValue
+          : String(firstValue).localeCompare(String(secondValue));
       return direction === 'ascending' ? comparison : -comparison;
     });
   });
@@ -81,12 +84,12 @@ export class TournamentListComponent {
     [Surface.Carpet]: 'Carpet',
   };
 
-  private sortValue(tournament: ITournament, column: SortColumn): string {
+  private sortValue(tournament: ITournament, column: SortColumn): string | number {
     switch (column) {
       case 'tournament':
         return tournament.title;
       case 'level':
-        return this.tournamentLevelLabels[tournament.level];
+        return tournament.level;
       case 'surface':
         return this.surfaceLabels[tournament.surface];
     }

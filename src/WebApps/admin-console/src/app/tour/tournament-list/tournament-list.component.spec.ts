@@ -106,14 +106,14 @@ describe('TournamentListComponent', () => {
       sortButton('Level').click();
       fixture.detectChanges();
 
-      expect(titles()).toEqual(['Inactive Open', 'Active Open']);
+      expect(titles()).toEqual(['Active Open', 'Inactive Open']);
       expect(sortButton('Level').textContent?.trim()).toBe('Level ↑');
       expect(sortButton('Level').closest('th')?.getAttribute('aria-sort')).toBe('ascending');
 
       sortButton('Level').click();
       fixture.detectChanges();
 
-      expect(titles()).toEqual(['Active Open', 'Inactive Open']);
+      expect(titles()).toEqual(['Inactive Open', 'Active Open']);
       expect(sortButton('Level').textContent?.trim()).toBe('Level ↓');
       expect(sortButton('Level').closest('th')?.getAttribute('aria-sort')).toBe('descending');
     });
