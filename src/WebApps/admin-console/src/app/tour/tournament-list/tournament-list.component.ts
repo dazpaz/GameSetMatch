@@ -7,6 +7,13 @@ import { TournamentService } from './tournament-service';
 type SortColumn = 'tournament' | 'level' | 'surface';
 type SortDirection = 'ascending' | 'descending';
 
+interface SortState {
+  readonly column: SortColumn;
+  readonly direction: SortDirection;
+}
+
+const DEFAULT_SORT: SortState = { column: 'tournament', direction: 'ascending' };
+
 @Component({
   imports: [],
   selector: 'ac-tournament-list',
@@ -31,10 +38,7 @@ export class TournamentListComponent {
 
   readonly showInactive = signal(false);
   readonly searchTerm = signal('');
-  readonly sort = signal<{ column: SortColumn; direction: SortDirection }>({
-    column: 'tournament',
-    direction: 'ascending',
-  });
+  readonly sort = signal<SortState>(DEFAULT_SORT);
 
   private readonly appliedSearchTerm = signal('');
 
