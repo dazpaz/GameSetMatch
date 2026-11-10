@@ -4,7 +4,7 @@ import { catchError, finalize, of } from 'rxjs';
 import { ITournament, Surface, TournamentLevel } from './tournament';
 import { TournamentService } from './tournament-service';
 
-type SortColumn = 'tournament' | 'level' | 'surface';
+type SortColumn = 'tournament' | 'location' | 'level' | 'surface';
 type EventKey = 'mensSingles' | 'womensSingles' | 'mensDoubles' | 'womensDoubles' | 'mixedDoubles';
 type SortDirection = 'ascending' | 'descending';
 
@@ -130,6 +130,8 @@ export class TournamentListComponent {
     switch (column) {
       case 'tournament':
         return tournament.title;
+      case 'location':
+        return tournament.location;
       case 'level':
         return tournament.level;
       case 'surface':

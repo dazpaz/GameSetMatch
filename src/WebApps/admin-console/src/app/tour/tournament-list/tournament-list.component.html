@@ -114,7 +114,22 @@
               </button>
             </th>
             <th scope="col" aria-label="Tournament status"></th>
-            <th scope="col">Location</th>
+            <th
+              scope="col"
+              [attr.aria-sort]="sort().column === 'location' ? sort().direction : null"
+            >
+              <button
+                class="btn btn-link p-0 text-body text-decoration-none fw-bold"
+                type="button"
+                aria-label="Sort by Location"
+                (click)="sortBy('location')"
+              >
+                Location
+                @if (sort().column === 'location') {
+                  <span aria-hidden="true">{{ sort().direction === 'ascending' ? '↑' : '↓' }}</span>
+                }
+              </button>
+            </th>
             <th scope="col" [attr.aria-sort]="sort().column === 'level' ? sort().direction : null">
               <button
                 class="btn btn-link p-0 text-body text-decoration-none fw-bold"
