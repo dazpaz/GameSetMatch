@@ -30,9 +30,11 @@ export class TournamentListComponent {
   readonly filterEnabled = signal(false);
   readonly levelFilter = signal('');
   readonly surfaceFilter = signal('');
+
   readonly levelOptions = Object.values(TournamentLevel).filter(
     (value): value is TournamentLevel => typeof value === 'number',
   );
+
   readonly surfaceOptions = Object.values(Surface).filter(
     (value): value is Surface => typeof value === 'number',
   );
@@ -44,6 +46,7 @@ export class TournamentListComponent {
     { key: 'womensDoubles', label: "Women's Doubles" },
     { key: 'mixedDoubles', label: 'Mixed Doubles' },
   ];
+  
   readonly selectedEvents = signal<ReadonlySet<EventKey>>(new Set());
 
   private readonly appliedSearchTerm = signal('');
