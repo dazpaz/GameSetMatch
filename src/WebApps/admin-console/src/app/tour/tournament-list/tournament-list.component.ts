@@ -44,9 +44,7 @@ export class TournamentListComponent {
     { key: 'womensDoubles', label: "Women's Doubles" },
     { key: 'mixedDoubles', label: 'Mixed Doubles' },
   ];
-  readonly selectedEvents = signal<ReadonlySet<EventKey>>(
-    new Set(this.eventOptions.map((option) => option.key)),
-  );
+  readonly selectedEvents = signal<ReadonlySet<EventKey>>(new Set());
 
   private readonly appliedSearchTerm = signal('');
 
@@ -65,7 +63,7 @@ export class TournamentListComponent {
   toggleFilter(): void {
     const enabled = !this.filterEnabled();
     this.filterEnabled.set(enabled);
-    this.selectedEvents.set(new Set(this.eventOptions.map((option) => option.key)));
+    this.selectedEvents.set(new Set());
     if (!enabled) {
       this.levelFilter.set('');
       this.surfaceFilter.set('');
@@ -102,15 +100,14 @@ export class TournamentListComponent {
   readonly tournaments = computed(() => {
     const level = this.filterEnabled() ? this.levelFilter() : '';
     const surface = this.filterEnabled() ? this.surfaceFilter() : '';
-    const selectedEvents = this.selectedEvents();
-    const filterEvents = this.filterEnabled() && selectedEvents.size < this.eventOptions.length;
+    const selectedEvents = this.filterEnabled() ? [...this.selectedEvents()] : [];
     const filteredTournaments = this.allTournaments().filter(
       (tournament) =>
         (this.showInactive() || tournament.isActive) &&
         tournament.title.toLowerCase().includes(this.appliedSearchTerm()) &&
         (level === '' || tournament.level === Number(level)) &&
         (surface === '' || tournament.surface === Number(surface)) &&
-        (!filterEvents || [...selectedEvents].some((key) => tournament[key])),
+        selectedEvents.every((key) => tournament[key]),
     );
 
     const { column, direction } = this.sort();
