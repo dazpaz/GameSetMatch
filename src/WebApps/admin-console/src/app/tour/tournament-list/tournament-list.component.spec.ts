@@ -118,6 +118,23 @@ describe('TournamentListComponent', () => {
       expect(sortButton('Level').closest('th')?.getAttribute('aria-sort')).toBe('descending');
     });
 
+    it('should sort by Location and reverse the order when clicked again', () => {
+      showAllTournaments();
+      sortButton('Location').click();
+      fixture.detectChanges();
+
+      expect(titles()).toEqual(['Inactive Open', 'Active Open']);
+      expect(sortButton('Location').textContent?.trim()).toBe('Location ↑');
+      expect(sortButton('Location').closest('th')?.getAttribute('aria-sort')).toBe('ascending');
+
+      sortButton('Location').click();
+      fixture.detectChanges();
+
+      expect(titles()).toEqual(['Active Open', 'Inactive Open']);
+      expect(sortButton('Location').textContent?.trim()).toBe('Location ↓');
+      expect(sortButton('Location').closest('th')?.getAttribute('aria-sort')).toBe('descending');
+    });
+
     it('should sort by Surface and reverse the order when clicked again', () => {
       showAllTournaments();
       sortButton('Surface').click();
