@@ -5,6 +5,7 @@ import { ITournament, Surface, TournamentLevel } from './tournament';
 import { TournamentService } from './tournament-service';
 
 type SortColumn = 'tournament' | 'level' | 'surface';
+type EventKey = 'mensSingles' | 'womensSingles' | 'mensDoubles' | 'womensDoubles' | 'mixedDoubles';
 type SortDirection = 'ascending' | 'descending';
 
 interface SortState {
@@ -26,7 +27,51 @@ export class TournamentListComponent {
   readonly searchTerm = signal('');
   readonly sort = signal<SortState>(DEFAULT_SORT);
 
+  readonly filterEnabled = signal(false);
+  readonly levelFilter = signal('');
+  readonly surfaceFilter = signal('');
+
+  readonly levelOptions = Object.values(TournamentLevel).filter(
+    (value): value is TournamentLevel => typeof value === 'number',
+  );
+
+  readonly surfaceOptions = Object.values(Surface).filter(
+    (value): value is Surface => typeof value === 'number',
+  );
+
+  readonly eventOptions: readonly { key: EventKey; label: string }[] = [
+    { key: 'mensSingles', label: "Men's Singles" },
+    { key: 'womensSingles', label: "Women's Singles" },
+    { key: 'mensDoubles', label: "Men's Doubles" },
+    { key: 'womensDoubles', label: "Women's Doubles" },
+    { key: 'mixedDoubles', label: 'Mixed Doubles' },
+  ];
+  
+  readonly selectedEvents = signal<ReadonlySet<EventKey>>(new Set());
+
   private readonly appliedSearchTerm = signal('');
+
+  toggleEvent(key: EventKey, selected: boolean): void {
+    this.selectedEvents.update((current) => {
+      const next = new Set(current);
+      if (selected) {
+        next.add(key);
+      } else {
+        next.delete(key);
+      }
+      return next;
+    });
+  }
+
+  toggleFilter(): void {
+    const enabled = !this.filterEnabled();
+    this.filterEnabled.set(enabled);
+    this.selectedEvents.set(new Set());
+    if (!enabled) {
+      this.levelFilter.set('');
+      this.surfaceFilter.set('');
+    }
+  }
 
   private readonly allTournaments = toSignal(
     inject(TournamentService)
@@ -56,10 +101,16 @@ export class TournamentListComponent {
   }
 
   readonly tournaments = computed(() => {
+    const level = this.filterEnabled() ? this.levelFilter() : '';
+    const surface = this.filterEnabled() ? this.surfaceFilter() : '';
+    const selectedEvents = this.filterEnabled() ? [...this.selectedEvents()] : [];
     const filteredTournaments = this.allTournaments().filter(
       (tournament) =>
         (this.showInactive() || tournament.isActive) &&
-        tournament.title.toLowerCase().includes(this.appliedSearchTerm()),
+        tournament.title.toLowerCase().includes(this.appliedSearchTerm()) &&
+        (level === '' || tournament.level === Number(level)) &&
+        (surface === '' || tournament.surface === Number(surface)) &&
+        selectedEvents.every((key) => tournament[key]),
     );
 
     const { column, direction } = this.sort();
