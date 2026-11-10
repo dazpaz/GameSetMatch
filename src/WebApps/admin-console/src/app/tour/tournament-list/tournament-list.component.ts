@@ -26,7 +26,26 @@ export class TournamentListComponent {
   readonly searchTerm = signal('');
   readonly sort = signal<SortState>(DEFAULT_SORT);
 
+  readonly filterEnabled = signal(false);
+  readonly levelFilter = signal('');
+  readonly surfaceFilter = signal('');
+  readonly levelOptions = Object.values(TournamentLevel).filter(
+    (value): value is TournamentLevel => typeof value === 'number',
+  );
+  readonly surfaceOptions = Object.values(Surface).filter(
+    (value): value is Surface => typeof value === 'number',
+  );
+
   private readonly appliedSearchTerm = signal('');
+
+  toggleFilter(): void {
+    const enabled = !this.filterEnabled();
+    this.filterEnabled.set(enabled);
+    if (!enabled) {
+      this.levelFilter.set('');
+      this.surfaceFilter.set('');
+    }
+  }
 
   private readonly allTournaments = toSignal(
     inject(TournamentService)
@@ -56,10 +75,14 @@ export class TournamentListComponent {
   }
 
   readonly tournaments = computed(() => {
+    const level = this.filterEnabled() ? this.levelFilter() : '';
+    const surface = this.filterEnabled() ? this.surfaceFilter() : '';
     const filteredTournaments = this.allTournaments().filter(
       (tournament) =>
         (this.showInactive() || tournament.isActive) &&
-        tournament.title.toLowerCase().includes(this.appliedSearchTerm()),
+        tournament.title.toLowerCase().includes(this.appliedSearchTerm()) &&
+        (level === '' || tournament.level === Number(level)) &&
+        (surface === '' || tournament.surface === Number(surface)),
     );
 
     const { column, direction } = this.sort();

@@ -15,6 +15,16 @@
       (search)="search()"
     />
   </div>
+  <button
+    class="btn btn-outline-secondary"
+    type="button"
+    id="filterToggle"
+    [class.active]="filterEnabled()"
+    [attr.aria-pressed]="filterEnabled()"
+    (click)="toggleFilter()"
+  >
+    Filter
+  </button>
   <div class="form-check form-switch mb-0">
     <input
       class="form-check-input"
@@ -27,6 +37,42 @@
     <label class="form-check-label" for="showInactive">Show inactive tournaments</label>
   </div>
 </div>
+@if (filterEnabled()) {
+  <div class="d-flex justify-content-end align-items-center gap-3 mb-3" id="filterControls">
+    <div class="d-flex align-items-center gap-2">
+      <label class="form-label mb-0" for="levelFilter">Level</label>
+      <select
+        class="form-select"
+        id="levelFilter"
+        [value]="levelFilter()"
+        (change)="levelFilter.set($any($event.target).value)"
+      >
+        <option value="">All</option>
+        @for (level of levelOptions; track level) {
+          <option [value]="level" [selected]="levelFilter() === '' + level">
+            {{ tournamentLevelLabels[level] }}
+          </option>
+        }
+      </select>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <label class="form-label mb-0" for="surfaceFilter">Surface</label>
+      <select
+        class="form-select"
+        id="surfaceFilter"
+        [value]="surfaceFilter()"
+        (change)="surfaceFilter.set($any($event.target).value)"
+      >
+        <option value="">All</option>
+        @for (surface of surfaceOptions; track surface) {
+          <option [value]="surface" [selected]="surfaceFilter() === '' + surface">
+            {{ surfaceLabels[surface] }}
+          </option>
+        }
+      </select>
+    </div>
+  </div>
+}
 <section class="card shadow-sm">
   <div class="card-body p-0">
     <div class="table-responsive">
