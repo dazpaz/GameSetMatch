@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TournamentListComponent } from './tour/tournament-list/tournament-list.component';
+import { AppHeadingComponent } from './app-heading/app-heading.component';
 
 @Component({
-  imports: [RouterOutlet, TournamentListComponent],
+  imports: [RouterOutlet, AppHeadingComponent],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
