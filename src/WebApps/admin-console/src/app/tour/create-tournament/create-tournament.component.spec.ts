@@ -52,7 +52,8 @@ describe('CreateTournamentComponent', () => {
 
   it.each(['Cancel', 'Save'])('returns to the tournament list when %s is clicked', async (label) => {
     const harness = await RouterTestingHarness.create();
-    await harness.navigateByUrl('/tour/create-tournament', CreateTournamentComponent);
+    const component = await harness.navigateByUrl('/tour/create-tournament', CreateTournamentComponent);
+    expect(component.isDirty()).toBe(false);
 
     const button = Array.from(harness.routeNativeElement!.querySelectorAll('button')).find(
       (element) => element.textContent?.trim() === label,
@@ -64,4 +65,44 @@ describe('CreateTournamentComponent', () => {
     expect(TestBed.inject(Router).url).toBe('/tour');
     expect(harness.routeNativeElement?.querySelector('table')).not.toBeNull();
   });
+
+  it.each(['title', 'level', 'mensSingles'])(
+    'marks the form dirty when %s changes and confirms before leaving',
+    async (field) => {
+      const harness = await RouterTestingHarness.create();
+      const component = await harness.navigateByUrl('/tour/create-tournament', CreateTournamentComponent);
+      const element = harness.routeNativeElement!;
+      const input = element.querySelector<HTMLInputElement | HTMLSelectElement>(`#${field}`)!;
+
+      expect(component.isDirty()).toBe(false);
+      if (field === 'mensSingles') {
+        input.click();
+      } else {
+        input.value = field === 'title' ? 'Open' : '1';
+        input.dispatchEvent(new Event('input'));
+        input.dispatchEvent(new Event('change'));
+      }
+      harness.detectChanges();
+
+      expect(component.isDirty()).toBe(true);
+      const button = (label: string) => Array.from(element.querySelectorAll('button')).find(
+        (candidate) => candidate.textContent?.trim() === label,
+      )!;
+      button('Cancel').click();
+      harness.detectChanges();
+      expect(element.querySelector('[role="dialog"]')).not.toBeNull();
+
+      button('No').click();
+      harness.detectChanges();
+      expect(element.querySelector('[role="dialog"]')).toBeNull();
+      expect(component.isDirty()).toBe(true);
+      expect(TestBed.inject(Router).url).toBe('/tour/create-tournament');
+
+      button('Cancel').click();
+      harness.detectChanges();
+      button('Yes').click();
+      await harness.fixture.whenStable();
+      expect(TestBed.inject(Router).url).toBe('/tour');
+    },
+  );
 });

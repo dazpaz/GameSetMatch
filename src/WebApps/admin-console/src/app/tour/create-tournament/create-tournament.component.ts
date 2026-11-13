@@ -1,7 +1,6 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormField, form } from '@angular/forms/signals';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import {
   ITournament,
   Surface,
@@ -16,7 +15,7 @@ type TournamentDetails = Omit<ITournament, 'tournamentId' | 'level' | 'surface' 
 };
 
 @Component({
-  imports: [FormField, CommonModule],
+  imports: [FormField],
   selector: 'ac-create-tournament',
   templateUrl: './create-tournament.component.html',
 })
@@ -42,20 +41,11 @@ export class CreateTournamentComponent {
   );
   readonly tournamentLevelLabels = tournamentLevelLabels;
   readonly surfaceLabels = surfaceLabels;
-  readonly isDirty = signal(false);
+  readonly isDirty = this.tournamentForm().dirty;
   readonly showUnsavedDialog = signal(false);
-
-  constructor() {
-    effect(() => {
-      // Access the form values to trigger change detection
-      this.details();
-      this.isDirty.set(true);
-    });
-  }
 
   async save(event: Event): Promise<void> {
     event.preventDefault();
-    this.isDirty.set(false);
     await this.router.navigateByUrl('/tour');
   }
 
