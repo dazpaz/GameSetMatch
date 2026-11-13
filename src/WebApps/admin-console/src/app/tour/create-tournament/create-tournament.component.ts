@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormField, form } from '@angular/forms/signals';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import {
   ITournament,
   Surface,
@@ -15,7 +15,7 @@ type TournamentDetails = Omit<ITournament, 'tournamentId' | 'level' | 'surface' 
 };
 
 @Component({
-  imports: [FormField, RouterLink],
+  imports: [FormField],
   selector: 'ac-create-tournament',
   templateUrl: './create-tournament.component.html',
 })
@@ -41,9 +41,30 @@ export class CreateTournamentComponent {
   );
   readonly tournamentLevelLabels = tournamentLevelLabels;
   readonly surfaceLabels = surfaceLabels;
+  readonly isDirty = this.tournamentForm().dirty;
+  readonly showUnsavedDialog = signal(false);
 
   async save(event: Event): Promise<void> {
     event.preventDefault();
+    await this.router.navigateByUrl('/tour');
+  }
+
+  cancel(): void {
+    if (this.isDirty()) {
+      this.showUnsavedDialog.set(true);
+    } else {
+      this.navigateToTournamentList();
+    }
+  }
+
+  onConfirmUnsavedChanges(confirm: boolean): void {
+    this.showUnsavedDialog.set(false);
+    if (confirm) {
+      this.navigateToTournamentList();
+    }
+  }
+
+  private async navigateToTournamentList(): Promise<void> {
     await this.router.navigateByUrl('/tour');
   }
 }
