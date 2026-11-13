@@ -1,5 +1,57 @@
 <h1>Create Tournament</h1>
-<div class="d-flex gap-2">
-  <button class="btn btn-outline-secondary" type="button" routerLink="/tour">Cancel</button>
-  <button class="btn btn-primary" type="button" routerLink="/tour">Save</button>
-</div>
+<p>Saving tournaments is not available yet. Entered details will not be saved.</p>
+<form (submit)="save($event)">
+  <div class="mb-3">
+    <label class="form-label" for="title">Tournament</label>
+    <input class="form-control" id="title" type="text" [formField]="tournamentForm.title" />
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="location">Location</label>
+    <input class="form-control" id="location" type="text" [formField]="tournamentForm.location" />
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="level">Level</label>
+    <select class="form-select" id="level" [formField]="tournamentForm.level">
+      <option value="">Select a level</option>
+      @for (level of levelOptions; track level) {
+        <option [value]="level">{{ tournamentLevelLabels[level] }}</option>
+      }
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="surface">Surface</label>
+    <select class="form-select" id="surface" [formField]="tournamentForm.surface">
+      <option value="">Select a surface</option>
+      @for (surface of surfaceOptions; track surface) {
+        <option [value]="surface">{{ surfaceLabels[surface] }}</option>
+      }
+    </select>
+  </div>
+  <fieldset class="mb-3">
+    <legend>Events</legend>
+    <div class="form-check">
+      <input class="form-check-input" id="mensSingles" type="checkbox" [formField]="tournamentForm.mensSingles" />
+      <label class="form-check-label" for="mensSingles">Men's Singles</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" id="womensSingles" type="checkbox" [formField]="tournamentForm.womensSingles" />
+      <label class="form-check-label" for="womensSingles">Women's Singles</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" id="mensDoubles" type="checkbox" [formField]="tournamentForm.mensDoubles" />
+      <label class="form-check-label" for="mensDoubles">Men's Doubles</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" id="womensDoubles" type="checkbox" [formField]="tournamentForm.womensDoubles" />
+      <label class="form-check-label" for="womensDoubles">Women's Doubles</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" id="mixedDoubles" type="checkbox" [formField]="tournamentForm.mixedDoubles" />
+      <label class="form-check-label" for="mixedDoubles">Mixed Doubles</label>
+    </div>
+  </fieldset>
+  <div class="d-flex gap-2">
+    <button class="btn btn-outline-secondary" type="button" routerLink="/tour">Cancel</button>
+    <button class="btn btn-primary" type="submit">Save</button>
+  </div>
+</form>
