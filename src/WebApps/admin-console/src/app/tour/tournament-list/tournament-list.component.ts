@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { catchError, finalize, of } from 'rxjs';
 import { ITournament, Surface, TournamentLevel } from './tournament';
 import { TournamentService } from './tournament-service';
@@ -16,7 +17,7 @@ interface SortState {
 const DEFAULT_SORT: SortState = { column: 'tournament', direction: 'ascending' };
 
 @Component({
-  imports: [],
+  imports: [RouterLink],
   selector: 'ac-tournament-list',
   templateUrl: './tournament-list.component.html',
 })

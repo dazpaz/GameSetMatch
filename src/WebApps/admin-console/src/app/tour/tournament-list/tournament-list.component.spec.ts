@@ -1,5 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TournamentListComponent } from './tournament-list.component';
 import { ITournament, Surface, TournamentLevel } from './tournament';
@@ -41,7 +42,7 @@ describe('TournamentListComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TournamentListComponent],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
 
     http = TestBed.inject(HttpTestingController);
@@ -65,6 +66,13 @@ describe('TournamentListComponent', () => {
     );
 
     expect(renderedTournamentTitles).toEqual(['Active Open']);
+  });
+
+  it('should link to the create tournament page', () => {
+    const createLink = fixture.nativeElement.querySelector('a.btn-primary');
+
+    expect(createLink.textContent.trim()).toBe('Create');
+    expect(createLink.getAttribute('href')).toBe('/tour/create-tournament');
   });
 
   describe('sorting tournaments', () => {
@@ -221,7 +229,7 @@ describe('TournamentListComponent while loading', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TournamentListComponent],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
 
     http = TestBed.inject(HttpTestingController);
@@ -255,7 +263,7 @@ describe('TournamentListComponent when the API returns an error', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TournamentListComponent],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
 
     http = TestBed.inject(HttpTestingController);
