@@ -3,6 +3,18 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ITournament } from './tournament';
 
+interface AddTournamentRequest {
+  title: string;
+  location: string;
+  level: number;
+  surface: number;
+  mensSingles: boolean;
+  womensSingles: boolean;
+  mensDoubles: boolean;
+  womensDoubles: boolean;
+  mixedDoubles: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class TournamentService {
   private readonly http = inject(HttpClient);
@@ -10,5 +22,9 @@ export class TournamentService {
 
   getTournaments(): Observable<readonly ITournament[]> {
     return this.http.get<readonly ITournament[]>(this.tournamentsUrl);
+  }
+
+  createTournament(tournament: AddTournamentRequest): Observable<string> {
+    return this.http.post<string>(this.tournamentsUrl, tournament);
   }
 }

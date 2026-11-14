@@ -1,13 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormField, form } from '@angular/forms/signals';
 import { Router } from '@angular/router';
-import {
-  ITournament,
-  Surface,
-  TournamentLevel,
-  surfaceLabels,
-  tournamentLevelLabels,
-} from '../tournament-list/tournament';
+import { ITournament, Surface, TournamentLevel, surfaceLabels, tournamentLevelLabels } from '../tournament-list/tournament';
+import { TournamentService } from '../tournament-list/tournament-service';
 
 type TournamentDetails = Omit<ITournament, 'tournamentId' | 'level' | 'surface' | 'isActive'> & {
   level: string;
@@ -23,6 +18,7 @@ type ValidationErrors = Partial<Record<'title' | 'location' | 'level' | 'surface
 })
 export class CreateTournamentComponent {
   private readonly router = inject(Router);
+  private readonly tournamentService = inject(TournamentService);
   readonly details = signal<TournamentDetails>({
     title: '',
     location: '',
@@ -73,7 +69,25 @@ export class CreateTournamentComponent {
       return;
     }
 
-    await this.router.navigateByUrl('/tour');
+    const details = this.details();
+    this.tournamentService.createTournament({
+      title: details.title,
+      location: details.location,
+      level: Number(details.level),
+      surface: Number(details.surface),
+      mensSingles: details.mensSingles,
+      womensSingles: details.womensSingles,
+      mensDoubles: details.mensDoubles,
+      womensDoubles: details.womensDoubles,
+      mixedDoubles: details.mixedDoubles,
+    }).subscribe({
+      next: () => {
+        this.router.navigateByUrl('/tour');
+      },
+      error: (err) => {
+        console.error('Failed to create tournament:', err);
+      },
+    });
   }
 
   cancel(): void {
