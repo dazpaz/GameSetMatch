@@ -1,17 +1,20 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { of } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { routes } from '../../app.routes';
 import { TournamentService } from '../tournament-list/tournament-service';
 import { CreateTournamentComponent } from './create-tournament.component';
 
 describe('CreateTournamentComponent', () => {
+  let createTournament: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
+    createTournament = vi.fn(() => of(''));
     TestBed.configureTestingModule({
       providers: [
         provideRouter(routes),
-        { provide: TournamentService, useValue: { getTournaments: () => of([]) } },
+        { provide: TournamentService, useValue: { getTournaments: () => of([]), createTournament } },
       ],
     });
   });
@@ -137,6 +140,8 @@ describe('CreateTournamentComponent', () => {
   });
 
   it('reports all errors and allows saving after correcting them', async () => {
+    const response = new Subject<string>();
+    createTournament.mockReturnValue(response);
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl('/tour/create-tournament', CreateTournamentComponent);
     const element = harness.routeNativeElement!;
@@ -165,6 +170,7 @@ describe('CreateTournamentComponent', () => {
     expect(surface.getAttribute('aria-invalid')).toBe('true');
     expect(surface.getAttribute('aria-describedby')).toBe('surface-error');
     expect(events.getAttribute('aria-describedby')).toBe('events-error');
+    expect(createTournament).not.toHaveBeenCalled();
 
     title.value = '  Open  ';
     title.dispatchEvent(new Event('input'));
@@ -199,13 +205,89 @@ describe('CreateTournamentComponent', () => {
     expect(TestBed.inject(Router).url).toBe('/tour/create-tournament');
     expect(element.querySelector('[role="alert"]')?.textContent).toContain('Select at least one event.');
     expect(element.querySelector('[role="alert"]')?.querySelectorAll('li')).toHaveLength(1);
+    expect(createTournament).not.toHaveBeenCalled();
 
     element.querySelector<HTMLInputElement>('#mensSingles')!.click();
     form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    expect(createTournament).toHaveBeenCalledOnce();
+    expect(createTournament).toHaveBeenCalledWith({
+      title: '  Open  ',
+      location: '  London  ',
+      level: 0,
+      surface: 0,
+      mensSingles: true,
+      womensSingles: false,
+      mensDoubles: false,
+      womensDoubles: false,
+      mixedDoubles: false,
+    });
+    expect(TestBed.inject(Router).url).toBe('/tour/create-tournament');
+
+    response.next('');
+    response.complete();
     await harness.fixture.whenStable();
 
     expect(TestBed.inject(Router).url).toBe('/tour');
     expect(harness.routeNativeElement?.querySelector('table')).not.toBeNull();
+  });
+
+  it('shows an error dialog after a failed save and keeps the form available for retry', async () => {
+    const error = new Error('Save failed');
+    createTournament.mockReturnValueOnce(throwError(() => error));
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      const harness = await RouterTestingHarness.create();
+      const component = await harness.navigateByUrl('/tour/create-tournament', CreateTournamentComponent);
+      component.details.update((details) => ({
+        ...details,
+        title: 'Open',
+        location: 'London',
+        level: '1',
+        surface: '2',
+        womensDoubles: true,
+      }));
+      harness.detectChanges();
+      const element = harness.routeNativeElement!;
+      const form = element.querySelector<HTMLFormElement>('form')!;
+
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      harness.detectChanges();
+
+      expect(createTournament).toHaveBeenCalledWith({
+        title: 'Open',
+        location: 'London',
+        level: 1,
+        surface: 2,
+        mensSingles: false,
+        womensSingles: false,
+        mensDoubles: false,
+        womensDoubles: true,
+        mixedDoubles: false,
+      });
+      const dialog = element.querySelector<HTMLElement>('[role="dialog"]')!;
+      expect(dialog.textContent).toContain('An error occurred while saving the tournament.');
+      expect(consoleError).toHaveBeenCalledWith('Failed to create tournament:', error);
+      expect(TestBed.inject(Router).url).toBe('/tour/create-tournament');
+      expect(component.details().title).toBe('Open');
+      expect(component.details().womensDoubles).toBe(true);
+
+      const ok = Array.from(dialog.querySelectorAll('button')).find(
+        (button) => button.textContent?.trim() === 'OK',
+      );
+      expect(ok).toBeDefined();
+      ok!.click();
+      harness.detectChanges();
+      expect(element.querySelector('[role="dialog"]')).toBeNull();
+      expect(TestBed.inject(Router).url).toBe('/tour/create-tournament');
+      expect(component.details().title).toBe('Open');
+
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      await harness.fixture.whenStable();
+      expect(createTournament).toHaveBeenCalledTimes(2);
+      expect(TestBed.inject(Router).url).toBe('/tour');
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   it.each(['mensSingles', 'womensSingles', 'mensDoubles', 'womensDoubles', 'mixedDoubles'])(
