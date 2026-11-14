@@ -33,6 +33,7 @@ export class CreateTournamentComponent {
     mixedDoubles: false,
   });
   readonly tournamentForm = form(this.details);
+  readonly errorMessage = signal<string | null>(null);
   readonly levelOptions = Object.values(TournamentLevel).filter(
     (value): value is TournamentLevel => typeof value === 'number',
   );
@@ -44,6 +45,12 @@ export class CreateTournamentComponent {
 
   async save(event: Event): Promise<void> {
     event.preventDefault();
+    if (!this.details().title.trim()) {
+      this.errorMessage.set('Tournament is required and cannot be blank.');
+      return;
+    }
+
+    this.errorMessage.set(null);
     await this.router.navigateByUrl('/tour');
   }
 }
