@@ -2,17 +2,44 @@
   <h3>Create Tournament</h3>
   <p>Saving tournaments is not available yet. Entered details will not be saved.</p>
   <form (submit)="save($event)">
+    @if (validationErrors().title || validationErrors().location || validationErrors().level || validationErrors().surface || validationErrors().events) {
+      <div class="alert alert-danger" role="alert">
+        <ul class="mb-0">
+          @if (validationErrors().title; as message) {
+            <li id="title-error">{{ message }}</li>
+          }
+          @if (validationErrors().location; as message) {
+            <li id="location-error">{{ message }}</li>
+          }
+          @if (validationErrors().level; as message) {
+            <li id="level-error">{{ message }}</li>
+          }
+          @if (validationErrors().surface; as message) {
+            <li id="surface-error">{{ message }}</li>
+          }
+          @if (validationErrors().events; as message) {
+            <li id="events-error">{{ message }}</li>
+          }
+        </ul>
+      </div>
+    }
     <div class="mb-3">
       <label class="form-label" for="title">Tournament</label>
-      <input class="form-control" id="title" type="text" [formField]="tournamentForm.title" />
+      <input class="form-control" id="title" type="text" [formField]="tournamentForm.title"
+        [attr.aria-invalid]="validationErrors().title ? 'true' : null"
+        [attr.aria-describedby]="validationErrors().title ? 'title-error' : null" />
     </div>
     <div class="mb-3">
       <label class="form-label" for="location">Location</label>
-      <input class="form-control" id="location" type="text" [formField]="tournamentForm.location" />
+      <input class="form-control" id="location" type="text" [formField]="tournamentForm.location"
+        [attr.aria-invalid]="validationErrors().location ? 'true' : null"
+        [attr.aria-describedby]="validationErrors().location ? 'location-error' : null" />
     </div>
     <div class="mb-3">
       <label class="form-label" for="level">Level</label>
-      <select class="form-select" id="level" [formField]="tournamentForm.level">
+      <select class="form-select" id="level" [formField]="tournamentForm.level"
+        [attr.aria-invalid]="validationErrors().level ? 'true' : null"
+        [attr.aria-describedby]="validationErrors().level ? 'level-error' : null">
         <option value="">Select a level</option>
         @for (level of levelOptions; track level) {
           <option [value]="level">{{ tournamentLevelLabels[level] }}</option>
@@ -21,14 +48,16 @@
     </div>
     <div class="mb-3">
       <label class="form-label" for="surface">Surface</label>
-      <select class="form-select" id="surface" [formField]="tournamentForm.surface">
+      <select class="form-select" id="surface" [formField]="tournamentForm.surface"
+        [attr.aria-invalid]="validationErrors().surface ? 'true' : null"
+        [attr.aria-describedby]="validationErrors().surface ? 'surface-error' : null">
         <option value="">Select a surface</option>
         @for (surface of surfaceOptions; track surface) {
           <option [value]="surface">{{ surfaceLabels[surface] }}</option>
         }
       </select>
     </div>
-    <fieldset class="mb-3">
+    <fieldset class="mb-3" [attr.aria-describedby]="validationErrors().events ? 'events-error' : null">
       <legend>Events</legend>
       <div class="form-check">
         <input class="form-check-input" id="mensSingles" type="checkbox" [formField]="tournamentForm.mensSingles" />
