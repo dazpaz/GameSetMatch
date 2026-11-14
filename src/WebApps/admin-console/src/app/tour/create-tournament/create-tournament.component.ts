@@ -14,7 +14,7 @@ type TournamentDetails = Omit<ITournament, 'tournamentId' | 'level' | 'surface' 
   surface: string;
 };
 
-type ValidationErrors = Partial<Record<'title' | 'location' | 'level' | 'surface', string>>;
+type ValidationErrors = Partial<Record<'title' | 'location' | 'level' | 'surface' | 'events', string>>;
 
 @Component({
   imports: [FormField, RouterLink],
@@ -59,6 +59,10 @@ export class CreateTournamentComponent {
     }
     if (!this.details().surface) {
       errors.surface = 'Select a surface.';
+    }
+    const { mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles } = this.details();
+    if (!mensSingles && !womensSingles && !mensDoubles && !womensDoubles && !mixedDoubles) {
+      errors.events = 'Select at least one event.';
     }
 
     this.validationErrors.set(errors);

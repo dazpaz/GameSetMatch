@@ -145,6 +145,7 @@ describe('CreateTournamentComponent', () => {
     const location = element.querySelector<HTMLInputElement>('#location')!;
     const level = element.querySelector<HTMLSelectElement>('#level')!;
     const surface = element.querySelector<HTMLSelectElement>('#surface')!;
+    const events = element.querySelector<HTMLFieldSetElement>('fieldset')!;
     expect(form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))).toBe(false);
     harness.detectChanges();
     await harness.fixture.whenStable();
@@ -154,6 +155,7 @@ describe('CreateTournamentComponent', () => {
     expect(alert?.textContent).toContain('Location is required');
     expect(alert?.textContent).toContain('Select a level.');
     expect(alert?.textContent).toContain('Select a surface.');
+    expect(alert?.textContent).toContain('Select at least one event.');
     expect(title.getAttribute('aria-invalid')).toBe('true');
     expect(title.getAttribute('aria-describedby')).toBe('title-error');
     expect(location.getAttribute('aria-invalid')).toBe('true');
@@ -162,6 +164,7 @@ describe('CreateTournamentComponent', () => {
     expect(level.getAttribute('aria-describedby')).toBe('level-error');
     expect(surface.getAttribute('aria-invalid')).toBe('true');
     expect(surface.getAttribute('aria-describedby')).toBe('surface-error');
+    expect(events.getAttribute('aria-describedby')).toBe('events-error');
 
     title.value = '  Open  ';
     title.dispatchEvent(new Event('input'));
@@ -191,11 +194,50 @@ describe('CreateTournamentComponent', () => {
     surface.dispatchEvent(new Event('input'));
     surface.dispatchEvent(new Event('change'));
     form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    harness.detectChanges();
+    await harness.fixture.whenStable();
+    expect(TestBed.inject(Router).url).toBe('/tour/create-tournament');
+    expect(element.querySelector('[role="alert"]')?.textContent).toContain('Select at least one event.');
+    expect(element.querySelector('[role="alert"]')?.querySelectorAll('li')).toHaveLength(1);
+
+    element.querySelector<HTMLInputElement>('#mensSingles')!.click();
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     await harness.fixture.whenStable();
 
     expect(TestBed.inject(Router).url).toBe('/tour');
     expect(harness.routeNativeElement?.querySelector('table')).not.toBeNull();
   });
+
+  it.each(['mensSingles', 'womensSingles', 'mensDoubles', 'womensDoubles', 'mixedDoubles'])(
+    'accepts %s as the only selected event and rejects deselection',
+    async (eventId) => {
+      const harness = await RouterTestingHarness.create();
+      const component = await harness.navigateByUrl('/tour/create-tournament', CreateTournamentComponent);
+      component.details.update((details) => ({
+        ...details,
+        title: 'Open',
+        location: 'London',
+        level: '0',
+        surface: '0',
+      }));
+      harness.detectChanges();
+      const element = harness.routeNativeElement!;
+      const event = element.querySelector<HTMLInputElement>(`#${eventId}`)!;
+      const form = element.querySelector<HTMLFormElement>('form')!;
+      event.click();
+      event.click();
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      harness.detectChanges();
+      await harness.fixture.whenStable();
+      expect(TestBed.inject(Router).url).toBe('/tour/create-tournament');
+      expect(element.querySelector('[role="alert"]')?.textContent).toContain('Select at least one event.');
+
+      event.click();
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      await harness.fixture.whenStable();
+      expect(TestBed.inject(Router).url).toBe('/tour');
+    },
+  );
 
   it('returns to the tournament list when Cancel is clicked', async () => {
     const harness = await RouterTestingHarness.create();

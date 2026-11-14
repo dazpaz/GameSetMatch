@@ -2,7 +2,7 @@
   <h3>Create Tournament</h3>
   <p>Saving tournaments is not available yet. Entered details will not be saved.</p>
   <form (submit)="save($event)">
-  @if (validationErrors().title || validationErrors().location || validationErrors().level || validationErrors().surface) {
+  @if (validationErrors().title || validationErrors().location || validationErrors().level || validationErrors().surface || validationErrors().events) {
     <div class="alert alert-danger" role="alert">
       <ul class="mb-0">
         @if (validationErrors().title; as message) {
@@ -16,6 +16,9 @@
         }
         @if (validationErrors().surface; as message) {
           <li id="surface-error">{{ message }}</li>
+        }
+        @if (validationErrors().events; as message) {
+          <li id="events-error">{{ message }}</li>
         }
       </ul>
     </div>
@@ -54,7 +57,7 @@
       }
     </select>
   </div>
-  <fieldset class="mb-3">
+  <fieldset class="mb-3" [attr.aria-describedby]="validationErrors().events ? 'events-error' : null">
     <legend>Events</legend>
     <div class="form-check">
       <input class="form-check-input" id="mensSingles" type="checkbox" [formField]="tournamentForm.mensSingles" />
