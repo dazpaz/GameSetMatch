@@ -14,6 +14,8 @@ type TournamentDetails = Omit<ITournament, 'tournamentId' | 'level' | 'surface' 
   surface: string;
 };
 
+type ValidationErrors = Partial<Record<'title' | 'location' | 'level' | 'surface', string>>;
+
 @Component({
   imports: [FormField, RouterLink],
   selector: 'ac-create-tournament',
@@ -33,7 +35,7 @@ export class CreateTournamentComponent {
     mixedDoubles: false,
   });
   readonly tournamentForm = form(this.details);
-  readonly validationErrors = signal<Partial<Record<'title' | 'location', string>>>({});
+  readonly validationErrors = signal<ValidationErrors>({});
   readonly levelOptions = Object.values(TournamentLevel).filter(
     (value): value is TournamentLevel => typeof value === 'number',
   );
@@ -45,12 +47,18 @@ export class CreateTournamentComponent {
 
   async save(event: Event): Promise<void> {
     event.preventDefault();
-    const errors: Partial<Record<'title' | 'location', string>> = {};
+    const errors: ValidationErrors = {};
     if (!this.details().title.trim()) {
       errors.title = 'Tournament is required and cannot be blank.';
     }
     if (!this.details().location.trim()) {
       errors.location = 'Location is required and cannot be blank.';
+    }
+    if (!this.details().level) {
+      errors.level = 'Select a level.';
+    }
+    if (!this.details().surface) {
+      errors.surface = 'Select a surface.';
     }
 
     this.validationErrors.set(errors);

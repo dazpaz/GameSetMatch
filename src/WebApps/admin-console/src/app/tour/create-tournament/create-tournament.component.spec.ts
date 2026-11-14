@@ -102,6 +102,40 @@ describe('CreateTournamentComponent', () => {
     expect(title.hasAttribute('aria-describedby')).toBe(false);
   });
 
+  it.each([
+    { missing: 'level', selected: 'surface', message: 'Select a level.' },
+    { missing: 'surface', selected: 'level', message: 'Select a surface.' },
+  ])('blocks saving when $missing is not selected', async ({ missing, selected, message }) => {
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/tour/create-tournament', CreateTournamentComponent);
+    const element = harness.routeNativeElement!;
+    const title = element.querySelector<HTMLInputElement>('#title')!;
+    const location = element.querySelector<HTMLInputElement>('#location')!;
+    title.value = 'Open';
+    title.dispatchEvent(new Event('input'));
+    location.value = 'London';
+    location.dispatchEvent(new Event('input'));
+    const selectedField = element.querySelector<HTMLSelectElement>(`#${selected}`)!;
+    selectedField.value = '0';
+    selectedField.dispatchEvent(new Event('input'));
+    selectedField.dispatchEvent(new Event('change'));
+    element.querySelector<HTMLFormElement>('form')!.dispatchEvent(
+      new Event('submit', { bubbles: true, cancelable: true }),
+    );
+    harness.detectChanges();
+    await harness.fixture.whenStable();
+
+    expect(TestBed.inject(Router).url).toBe('/tour/create-tournament');
+    const alert = element.querySelector('[role="alert"]');
+    expect(element.querySelector('form')?.firstElementChild).toBe(alert);
+    expect(alert?.textContent).toContain(message);
+    const missingField = element.querySelector<HTMLSelectElement>(`#${missing}`)!;
+    expect(missingField.getAttribute('aria-invalid')).toBe('true');
+    expect(missingField.getAttribute('aria-describedby')).toBe(`${missing}-error`);
+    expect(selectedField.hasAttribute('aria-invalid')).toBe(false);
+    expect(selectedField.hasAttribute('aria-describedby')).toBe(false);
+  });
+
   it('reports all errors and allows saving after correcting them', async () => {
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl('/tour/create-tournament', CreateTournamentComponent);
@@ -109,6 +143,8 @@ describe('CreateTournamentComponent', () => {
     const form = element.querySelector<HTMLFormElement>('form')!;
     const title = element.querySelector<HTMLInputElement>('#title')!;
     const location = element.querySelector<HTMLInputElement>('#location')!;
+    const level = element.querySelector<HTMLSelectElement>('#level')!;
+    const surface = element.querySelector<HTMLSelectElement>('#surface')!;
     expect(form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))).toBe(false);
     harness.detectChanges();
     await harness.fixture.whenStable();
@@ -116,10 +152,16 @@ describe('CreateTournamentComponent', () => {
     const alert = element.querySelector('[role="alert"]');
     expect(alert?.textContent).toContain('Tournament is required');
     expect(alert?.textContent).toContain('Location is required');
+    expect(alert?.textContent).toContain('Select a level.');
+    expect(alert?.textContent).toContain('Select a surface.');
     expect(title.getAttribute('aria-invalid')).toBe('true');
     expect(title.getAttribute('aria-describedby')).toBe('title-error');
     expect(location.getAttribute('aria-invalid')).toBe('true');
     expect(location.getAttribute('aria-describedby')).toBe('location-error');
+    expect(level.getAttribute('aria-invalid')).toBe('true');
+    expect(level.getAttribute('aria-describedby')).toBe('level-error');
+    expect(surface.getAttribute('aria-invalid')).toBe('true');
+    expect(surface.getAttribute('aria-describedby')).toBe('surface-error');
 
     title.value = '  Open  ';
     title.dispatchEvent(new Event('input'));
@@ -133,6 +175,21 @@ describe('CreateTournamentComponent', () => {
 
     location.value = '  London  ';
     location.dispatchEvent(new Event('input'));
+    level.value = '0';
+    level.dispatchEvent(new Event('input'));
+    level.dispatchEvent(new Event('change'));
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    harness.detectChanges();
+    expect(element.querySelector('[role="alert"]')?.textContent).toContain('Select a surface.');
+    expect(element.querySelector('[role="alert"]')?.textContent).not.toContain('Select a level.');
+    expect(level.hasAttribute('aria-invalid')).toBe(false);
+    expect(level.hasAttribute('aria-describedby')).toBe(false);
+    expect(surface.getAttribute('aria-invalid')).toBe('true');
+    expect(TestBed.inject(Router).url).toBe('/tour/create-tournament');
+
+    surface.value = '0';
+    surface.dispatchEvent(new Event('input'));
+    surface.dispatchEvent(new Event('change'));
     form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     await harness.fixture.whenStable();
 
