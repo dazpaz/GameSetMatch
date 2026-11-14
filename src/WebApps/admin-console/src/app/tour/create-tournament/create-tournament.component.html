@@ -2,20 +2,29 @@
   <h3>Create Tournament</h3>
   <p>Saving tournaments is not available yet. Entered details will not be saved.</p>
   <form (submit)="save($event)">
-  @if (validationError(); as error) {
-    <div class="alert alert-danger" role="alert" id="form-error">{{ error.message }}</div>
+  @if (validationErrors().title || validationErrors().location) {
+    <div class="alert alert-danger" role="alert">
+      <ul class="mb-0">
+        @if (validationErrors().title; as message) {
+          <li id="title-error">{{ message }}</li>
+        }
+        @if (validationErrors().location; as message) {
+          <li id="location-error">{{ message }}</li>
+        }
+      </ul>
+    </div>
   }
   <div class="mb-3">
     <label class="form-label" for="title">Tournament</label>
     <input class="form-control" id="title" type="text" [formField]="tournamentForm.title"
-      [attr.aria-invalid]="validationError()?.field === 'title' ? 'true' : null"
-      [attr.aria-describedby]="validationError()?.field === 'title' ? 'form-error' : null" />
+      [attr.aria-invalid]="validationErrors().title ? 'true' : null"
+      [attr.aria-describedby]="validationErrors().title ? 'title-error' : null" />
   </div>
   <div class="mb-3">
     <label class="form-label" for="location">Location</label>
     <input class="form-control" id="location" type="text" [formField]="tournamentForm.location"
-      [attr.aria-invalid]="validationError()?.field === 'location' ? 'true' : null"
-      [attr.aria-describedby]="validationError()?.field === 'location' ? 'form-error' : null" />
+      [attr.aria-invalid]="validationErrors().location ? 'true' : null"
+      [attr.aria-describedby]="validationErrors().location ? 'location-error' : null" />
   </div>
   <div class="mb-3">
     <label class="form-label" for="level">Level</label>

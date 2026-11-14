@@ -33,7 +33,7 @@ export class CreateTournamentComponent {
     mixedDoubles: false,
   });
   readonly tournamentForm = form(this.details);
-  readonly validationError = signal<{ field: 'title' | 'location'; message: string } | null>(null);
+  readonly validationErrors = signal<Partial<Record<'title' | 'location', string>>>({});
   readonly levelOptions = Object.values(TournamentLevel).filter(
     (value): value is TournamentLevel => typeof value === 'number',
   );
@@ -45,16 +45,19 @@ export class CreateTournamentComponent {
 
   async save(event: Event): Promise<void> {
     event.preventDefault();
+    const errors: Partial<Record<'title' | 'location', string>> = {};
     if (!this.details().title.trim()) {
-      this.validationError.set({ field: 'title', message: 'Tournament is required and cannot be blank.' });
-      return;
+      errors.title = 'Tournament is required and cannot be blank.';
     }
     if (!this.details().location.trim()) {
-      this.validationError.set({ field: 'location', message: 'Location is required and cannot be blank.' });
+      errors.location = 'Location is required and cannot be blank.';
+    }
+
+    this.validationErrors.set(errors);
+    if (Object.keys(errors).length > 0) {
       return;
     }
 
-    this.validationError.set(null);
     await this.router.navigateByUrl('/tour');
   }
 }
