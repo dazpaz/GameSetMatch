@@ -42,6 +42,8 @@ export class CreateTournamentComponent {
   readonly surfaceLabels = surfaceLabels;
   readonly isDirty = this.tournamentForm().dirty;
   readonly showUnsavedDialog = signal(false);
+  readonly errorMessage = signal<string>('');
+  readonly showErrorDialog = signal(false);
 
   async save(event: Event): Promise<void> {
     event.preventDefault();
@@ -86,8 +88,15 @@ export class CreateTournamentComponent {
       },
       error: (err) => {
         console.error('Failed to create tournament:', err);
-      },
+        this.errorMessage.set('An error occurred while saving the tournament.');
+        this.showErrorDialog.set(true);
+      }
     });
+  }
+
+  onErrorDialogOk(): void {
+    this.showErrorDialog.set(false);
+    this.errorMessage.set('');
   }
 
   cancel(): void {
