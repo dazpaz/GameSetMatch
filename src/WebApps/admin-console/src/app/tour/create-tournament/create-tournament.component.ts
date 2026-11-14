@@ -14,6 +14,8 @@ type TournamentDetails = Omit<ITournament, 'tournamentId' | 'level' | 'surface' 
   surface: string;
 };
 
+type ValidationErrors = Partial<Record<'title' | 'location' | 'level' | 'surface' | 'events', string>>;
+
 @Component({
   imports: [FormField],
   selector: 'ac-create-tournament',
@@ -33,6 +35,7 @@ export class CreateTournamentComponent {
     mixedDoubles: false,
   });
   readonly tournamentForm = form(this.details);
+  readonly validationErrors = signal<ValidationErrors>({});
   readonly levelOptions = Object.values(TournamentLevel).filter(
     (value): value is TournamentLevel => typeof value === 'number',
   );
@@ -46,6 +49,30 @@ export class CreateTournamentComponent {
 
   async save(event: Event): Promise<void> {
     event.preventDefault();
+    
+    const errors: ValidationErrors = {};
+    if (!this.details().title.trim()) {
+      errors.title = 'Tournament is required and cannot be blank.';
+    }
+    if (!this.details().location.trim()) {
+      errors.location = 'Location is required and cannot be blank.';
+    }
+    if (!this.details().level) {
+      errors.level = 'Select a level.';
+    }
+    if (!this.details().surface) {
+      errors.surface = 'Select a surface.';
+    }
+    const { mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles } = this.details();
+    if (!mensSingles && !womensSingles && !mensDoubles && !womensDoubles && !mixedDoubles) {
+      errors.events = 'Select at least one event.';
+    }
+
+    this.validationErrors.set(errors);
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
+
     await this.router.navigateByUrl('/tour');
   }
 
