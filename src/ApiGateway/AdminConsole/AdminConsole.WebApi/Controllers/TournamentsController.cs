@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using TourManagement.Application.Commands;
 using TourManagement.Application.Handlers;
@@ -36,18 +35,17 @@ namespace AdminConsole.WebApi.Controllers
 			return Ok(result.Value);
 		}
 
-		[HttpPost(Name = "CreateTournament")]
-		public ActionResult Create(AddTournamentDto addTournamentDto)
+		[HttpPost(Name = "AddTournament")]
+		public IActionResult AddTournament(AddTournamentDto addTournamentDto)
 		{
 			var command = AddTournamentCommand.CreateFromDto(addTournamentDto);
 			if (command.IsFailure) return BadRequest(command.Error);
 
 			var result = _tournamentCommandHandler.HandleAddTournamentCommand(command.Value);
-			if (result.IsFailure) return BadRequest(result.Error);
+			if (result.IsFailure)
+				return StatusCode(StatusCodes.Status500InternalServerError, result.Error);
 
-			return result.IsSuccess
-				? CreatedAtAction(nameof(GetTournament), new { id = result.Value }, null)
-				: BadRequest(result.Error);
+			return CreatedAtAction(nameof(GetTournament), new { id = result.Value }, null);
 		}
 	}
 }

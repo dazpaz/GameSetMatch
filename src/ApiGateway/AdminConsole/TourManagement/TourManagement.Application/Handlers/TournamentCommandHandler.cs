@@ -22,15 +22,10 @@ namespace TourManagement.Application.Handlers
 				command.MensSingles, command.WomensSingles, command.MensDoubles, command.WomensDoubles,
 				command.MixedDoubles);
 
-			try
-			{
-				_uow.TournamentRepository.Add(tournament);
-				_uow.SaveChanges();
-			}
-			catch (Exception ex)
-			{
-				return Result<Guid>.Failure($"Failed to add tournament: {ex.Message}");
-			}
+			_uow.TournamentRepository.Add(tournament);
+			
+			var saveResult =_uow.SaveChanges();
+			if (saveResult.IsFailure) return Result<Guid>.Failure(saveResult.Error);
 
 			return Result<Guid>.Success(id);
 		}
