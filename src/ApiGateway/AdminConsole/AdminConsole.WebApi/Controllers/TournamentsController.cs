@@ -47,5 +47,18 @@ namespace AdminConsole.WebApi.Controllers
 
 			return CreatedAtAction(nameof(GetTournament), new { id = result.Value }, null);
 		}
+
+		[HttpPut("{id}", Name = "UpdateTournament")]
+		public IActionResult UpdateTournament(Guid id, UpdateTournamentDto updateTournamentDto)
+		{
+			var command = UpdateTournamentCommand.CreateFromDto(id, updateTournamentDto);
+			if (command.IsFailure) return BadRequest(command.Error);
+
+			var result = _tournamentCommandHandler.HandleUpdateTournamentCommand(command.Value);
+			if (result.IsFailure)
+				return StatusCode(StatusCodes.Status500InternalServerError, result.Error);
+
+			return NoContent();
+		}
 	}
 }
