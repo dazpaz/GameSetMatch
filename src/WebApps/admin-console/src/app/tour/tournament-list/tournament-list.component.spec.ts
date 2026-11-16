@@ -75,6 +75,14 @@ describe('TournamentListComponent', () => {
     expect(createLink.getAttribute('href')).toBe('/tour/create-tournament');
   });
 
+  it('should link each tournament title to its edit page', () => {
+    const titleLink = fixture.nativeElement.querySelector('.tournament-title');
+
+    expect(titleLink.tagName).toBe('A');
+    expect(titleLink.textContent.trim()).toBe('Active Open');
+    expect(titleLink.getAttribute('href')).toBe('/tour/edit-tournament/1');
+  });
+
   describe('sorting tournaments', () => {
     const titles = () =>
       Array.from(

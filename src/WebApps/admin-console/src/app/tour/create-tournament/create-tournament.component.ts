@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormField, form } from '@angular/forms/signals';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { map } from 'rxjs';
 import { ITournament, Surface, TournamentLevel, surfaceLabels, tournamentLevelLabels } from '../tournament-list/tournament';
 import { TournamentService } from '../tournament-list/tournament-service';
 
@@ -17,8 +18,12 @@ type ValidationErrors = Partial<Record<'title' | 'location' | 'level' | 'surface
   templateUrl: './create-tournament.component.html',
 })
 export class CreateTournamentComponent {
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly tournamentService = inject(TournamentService);
+  readonly tournamentId = this.route.snapshot.paramMap.get('id');
+  readonly isLoadingTournament = signal(this.tournamentId !== null);
+  readonly tournamentLoadFailed = signal(false);
   readonly details = signal<TournamentDetails>({
     title: '',
     location: '',
@@ -44,6 +49,34 @@ export class CreateTournamentComponent {
   readonly showUnsavedDialog = signal(false);
   readonly errorMessage = signal<string>('');
   readonly showErrorDialog = signal(false);
+
+  constructor() {
+    if (this.tournamentId) {
+      this.tournamentService.getTournament(this.tournamentId).subscribe({
+        next: (tournament) => {
+          this.details.set({
+            title: tournament.title,
+            location: tournament.location,
+            level: String(tournament.level),
+            surface: String(tournament.surface),
+            mensSingles: tournament.mensSingles,
+            womensSingles: tournament.womensSingles,
+            mensDoubles: tournament.mensDoubles,
+            womensDoubles: tournament.womensDoubles,
+            mixedDoubles: tournament.mixedDoubles,
+          });
+          this.isLoadingTournament.set(false);
+        },
+        error: (err) => {
+          console.error('Failed to retrieve tournament:', err);
+          this.errorMessage.set('An error occurred while loading the tournament.');
+          this.showErrorDialog.set(true);
+          this.tournamentLoadFailed.set(true);
+          this.isLoadingTournament.set(false);
+        },
+      });
+    }
+  }
 
   async save(event: Event): Promise<void> {
     event.preventDefault();
@@ -72,7 +105,7 @@ export class CreateTournamentComponent {
     }
 
     const details = this.details();
-    this.tournamentService.createTournament({
+    const tournament = {
       title: details.title,
       location: details.location,
       level: Number(details.level),
@@ -82,12 +115,19 @@ export class CreateTournamentComponent {
       mensDoubles: details.mensDoubles,
       womensDoubles: details.womensDoubles,
       mixedDoubles: details.mixedDoubles,
-    }).subscribe({
+    };
+    const saveRequest = this.tournamentId
+      ? this.tournamentService.updateTournament(this.tournamentId, tournament).pipe(map(() => undefined))
+      : this.tournamentService.createTournament(tournament).pipe(map(() => undefined));
+    saveRequest.subscribe({
       next: () => {
         this.router.navigateByUrl('/tour');
       },
       error: (err) => {
-        console.error('Failed to create tournament:', err);
+        console.error(
+          this.tournamentId ? 'Failed to update tournament:' : 'Failed to create tournament:',
+          err,
+        );
         this.errorMessage.set('An error occurred while saving the tournament.');
         this.showErrorDialog.set(true);
       }
