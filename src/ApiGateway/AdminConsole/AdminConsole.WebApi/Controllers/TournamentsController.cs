@@ -60,5 +60,18 @@ namespace AdminConsole.WebApi.Controllers
 
 			return NoContent();
 		}
+
+		[HttpPatch("{id}/active", Name = "SetTournamentActive")]
+		public IActionResult SetTournamentActive(Guid id, SetTournamentActiveDto setTournamentActiveDto)
+		{
+			var command = SetTournamentActiveCommand.CreateFromDto(id, setTournamentActiveDto);
+			if (command.IsFailure) return BadRequest(command.Error);
+
+			var result = _tournamentCommandHandler.HandleSetTournamentActiveCommand(command.Value);
+			if (result.IsFailure)
+				return StatusCode(StatusCodes.Status500InternalServerError, result.Error);
+
+			return NoContent();
+		}
 	}
 }
