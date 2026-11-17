@@ -74,8 +74,11 @@ export class TournamentListComponent {
     }
   }
 
-  private readonly allTournaments = toSignal(
-    inject(TournamentService)
+  private readonly tournamentService = inject(TournamentService);
+  private readonly activeOverrides = signal<ReadonlyMap<string, boolean>>(new Map());
+
+  private readonly loadedTournaments = toSignal(
+    this.tournamentService
       .getTournaments()
       .pipe(
         catchError(() => {
@@ -86,6 +89,31 @@ export class TournamentListComponent {
       ),
     { initialValue: [] as readonly ITournament[] },
   );
+
+  private readonly allTournaments = computed(() => {
+    const overrides = this.activeOverrides();
+    return this.loadedTournaments().map((tournament) =>
+      overrides.has(tournament.tournamentId)
+        ? { ...tournament, isActive: overrides.get(tournament.tournamentId)! }
+        : tournament,
+    );
+  });
+
+  setActive(tournament: ITournament, input: HTMLInputElement): void {
+    const isActive = input.checked;
+    this.tournamentService.setTournamentActive(tournament.tournamentId, isActive).subscribe({
+      next: () => {
+        this.errorMessage.set(null);
+        this.activeOverrides.update((current) =>
+          new Map(current).set(tournament.tournamentId, isActive),
+        );
+      },
+      error: () => {
+        input.checked = !isActive;
+        this.errorMessage.set('Unable to update the tournament status');
+      },
+    });
+  }
 
   search(): void {
     this.appliedSearchTerm.set(this.searchTerm().trim().toLowerCase());

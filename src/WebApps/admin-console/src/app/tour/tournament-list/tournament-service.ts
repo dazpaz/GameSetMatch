@@ -35,4 +35,8 @@ export class TournamentService {
   updateTournament(id: string, tournament: TournamentRequest): Observable<void> {
     return this.http.put<void>(`${this.tournamentsUrl}/${id}`, tournament);
   }
+
+  setTournamentActive(id: string, isActive: boolean): Observable<void> {
+    return this.http.patch<void>(`${this.tournamentsUrl}/${id}/active`, { isActive });
+  }
 }
