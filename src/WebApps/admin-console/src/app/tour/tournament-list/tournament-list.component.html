@@ -175,7 +175,12 @@
             @for (tournament of tournaments(); track tournament.tournamentId) {
               <tr [class.inactive-tournament]="!tournament.isActive">
                 <th scope="row" class="fw-normal">
-                  <span class="tournament-title">{{ tournament.title }}</span>
+                  <a
+                    class="tournament-title"
+                    [routerLink]="['/tour/edit-tournament', tournament.tournamentId]"
+                  >
+                    {{ tournament.title }}
+                  </a>
                   @if (!tournament.isActive) {
                     <span class="ms-2 text-secondary">
                       <i class="fa-solid fa-ban" aria-hidden="true"></i>

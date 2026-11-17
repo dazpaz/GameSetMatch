@@ -16,6 +16,10 @@ export const routes: Routes = [
     component: CreateTournamentComponent
   },
   {
+    path: 'tour/edit-tournament/:id',
+    component: CreateTournamentComponent
+  },
+  {
     path: 'tour',
     component: TournamentListComponent
   },

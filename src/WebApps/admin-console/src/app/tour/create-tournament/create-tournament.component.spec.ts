@@ -8,13 +8,20 @@ import { CreateTournamentComponent } from './create-tournament.component';
 
 describe('CreateTournamentComponent', () => {
   let createTournament: ReturnType<typeof vi.fn>;
+  let getTournament: ReturnType<typeof vi.fn>;
+  let updateTournament: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     createTournament = vi.fn(() => of(''));
+    getTournament = vi.fn();
+    updateTournament = vi.fn(() => of(undefined));
     TestBed.configureTestingModule({
       providers: [
         provideRouter(routes),
-        { provide: TournamentService, useValue: { getTournaments: () => of([]), createTournament } },
+        {
+          provide: TournamentService,
+          useValue: { getTournaments: () => of([]), getTournament, createTournament, updateTournament },
+        },
       ],
     });
   });
@@ -50,7 +57,63 @@ describe('CreateTournamentComponent', () => {
     });
     expect(component.details()).not.toHaveProperty('isActive');
     expect(element.querySelector('#isActive')).toBeNull();
-    expect(element.textContent).toContain('Entered details will not be saved.');
+    expect(element.textContent).toContain('Create Tournament');
+    expect(element.textContent).not.toContain('will not be saved');
+  });
+
+  it('loads and updates the selected tournament', async () => {
+    getTournament.mockReturnValue(
+      of({
+        tournamentId: 'tournament-1',
+        title: 'Open',
+        location: 'London',
+        level: 1,
+        surface: 2,
+        mensSingles: true,
+        womensSingles: false,
+        mensDoubles: false,
+        womensDoubles: false,
+        mixedDoubles: false,
+        isActive: true,
+      }),
+    );
+    const harness = await RouterTestingHarness.create();
+    const component = await harness.navigateByUrl(
+      '/tour/edit-tournament/tournament-1',
+      CreateTournamentComponent,
+    );
+    harness.detectChanges();
+
+    expect(getTournament).toHaveBeenCalledWith('tournament-1');
+    expect(component.details()).toMatchObject({
+      title: 'Open',
+      location: 'London',
+      level: '1',
+      surface: '2',
+      mensSingles: true,
+    });
+    expect(harness.routeNativeElement?.textContent).toContain('Edit Tournament');
+
+    const title = harness.routeNativeElement!.querySelector<HTMLInputElement>('#title')!;
+    title.value = 'Updated Open';
+    title.dispatchEvent(new Event('input'));
+    harness.routeNativeElement!.querySelector<HTMLFormElement>('form')!.dispatchEvent(
+      new Event('submit', { bubbles: true, cancelable: true }),
+    );
+    await harness.fixture.whenStable();
+
+    expect(updateTournament).toHaveBeenCalledWith('tournament-1', {
+      title: 'Updated Open',
+      location: 'London',
+      level: 1,
+      surface: 2,
+      mensSingles: true,
+      womensSingles: false,
+      mensDoubles: false,
+      womensDoubles: false,
+      mixedDoubles: false,
+    });
+    expect(TestBed.inject(Router).url).toBe('/tour');
   });
 
   it.each(['', '   ', ' \t\n '])('blocks saving a blank tournament name %j', async (value) => {

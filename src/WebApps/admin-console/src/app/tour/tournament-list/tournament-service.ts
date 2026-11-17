@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ITournament } from './tournament';
 
-interface AddTournamentRequest {
+interface TournamentRequest {
   title: string;
   location: string;
   level: number;
@@ -24,7 +24,15 @@ export class TournamentService {
     return this.http.get<readonly ITournament[]>(this.tournamentsUrl);
   }
 
-  createTournament(tournament: AddTournamentRequest): Observable<string> {
+  getTournament(id: string): Observable<ITournament> {
+    return this.http.get<ITournament>(`${this.tournamentsUrl}/${id}`);
+  }
+
+  createTournament(tournament: TournamentRequest): Observable<string> {
     return this.http.post<string>(this.tournamentsUrl, tournament);
+  }
+
+  updateTournament(id: string, tournament: TournamentRequest): Observable<void> {
+    return this.http.put<void>(`${this.tournamentsUrl}/${id}`, tournament);
   }
 }
