@@ -9,6 +9,7 @@ namespace TourManagement.Application.Handlers
 	{
 		Result<Guid> HandleAddTournamentCommand(AddTournamentCommand command);
 		Result HandleUpdateTournamentCommand(UpdateTournamentCommand command);
+		Result HandleSetTournamentActiveCommand(SetTournamentActiveCommand command);
 	}
 
 	public class TournamentCommandHandler(IUnitOfWork uow) : ITournamentCommandHandler
@@ -44,6 +45,23 @@ namespace TourManagement.Application.Handlers
 			var saveResult = _uow.SaveChanges();
 			if (saveResult.IsFailure) return Result.Failure(saveResult.Error);
 			
+			return Result.Success();
+		}
+
+		public Result HandleSetTournamentActiveCommand(SetTournamentActiveCommand command)
+		{
+			var tournament = _uow.TournamentRepository.GetById(command.Id);
+			if (tournament == null)
+				return Result.Failure($"Tournament with Id {command.Id} not found.");
+
+			if (command.IsActive)
+				tournament.SetActive();
+			else
+				tournament.SetDeactive();
+
+			var saveResult = _uow.SaveChanges();
+			if (saveResult.IsFailure) return Result.Failure(saveResult.Error);
+
 			return Result.Success();
 		}
 	}

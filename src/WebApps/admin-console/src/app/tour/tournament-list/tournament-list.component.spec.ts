@@ -83,6 +83,37 @@ describe('TournamentListComponent', () => {
     expect(titleLink.getAttribute('href')).toBe('/tour/edit-tournament/1');
   });
 
+  describe('changing the active flag', () => {
+    const toggleFor = (title: string) =>
+      (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>(
+        `input[aria-label="Active: ${title}"]`,
+      )!;
+
+    it('should send only the isActive flag and hide the tournament once deactivated', () => {
+      expect(toggleFor('Active Open').checked).toBe(true);
+
+      toggleFor('Active Open').click();
+      const request = http.expectOne('https://localhost:7288/tournaments/1/active');
+      expect(request.request.method).toBe('PATCH');
+      expect(request.request.body).toEqual({ isActive: false });
+      request.flush(null, { status: 204, statusText: 'No Content' });
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('.tournament-title')).toBeNull();
+    });
+
+    it('should show an error and keep the tournament active when the update fails', () => {
+      toggleFor('Active Open').click();
+      http
+        .expectOne('https://localhost:7288/tournaments/1/active')
+        .flush('error', { status: 500, statusText: 'Server Error' });
+      fixture.detectChanges();
+
+      expect(component.errorMessage()).toBe('Unable to update the tournament status');
+      expect(toggleFor('Active Open').checked).toBe(true);
+    });
+  });
+
   describe('sorting tournaments', () => {
     const titles = () =>
       Array.from(
@@ -214,7 +245,7 @@ describe('TournamentListComponent', () => {
       const activeRow = rows[0];
       const inactiveRow = rows[1];
 
-      expect((fixture.nativeElement as HTMLElement).querySelectorAll('thead th')).toHaveLength(9);
+      expect((fixture.nativeElement as HTMLElement).querySelectorAll('thead th')).toHaveLength(10);
       expect(inactiveRow.closest('tr')?.classList).toContain('inactive-tournament');
       expect(activeRow.querySelector('.fa-ban')).toBeNull();
       expect(inactiveRow.querySelector('.fa-solid.fa-ban')).not.toBeNull();

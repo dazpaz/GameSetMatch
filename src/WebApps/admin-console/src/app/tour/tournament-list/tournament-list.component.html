@@ -164,12 +164,13 @@
             <th scope="col">Men's Doubles</th>
             <th scope="col">Women's Doubles</th>
             <th scope="col">Mixed Doubles</th>
+            <th scope="col">Active</th>
           </tr>
         </thead>
         <tbody>
           @if (isLoading()) {
             <tr>
-              <td colspan="9" class="text-center text-muted py-4">Loading tournaments...</td>
+              <td colspan="10" class="text-center text-muted py-4">Loading tournaments...</td>
             </tr>
           } @else {
             @for (tournament of tournaments(); track tournament.tournamentId) {
@@ -196,10 +197,22 @@
                 <td>{{ tournament.mensDoubles ? 'Yes' : 'No' }}</td>
                 <td>{{ tournament.womensDoubles ? 'Yes' : 'No' }}</td>
                 <td>{{ tournament.mixedDoubles ? 'Yes' : 'No' }}</td>
+                <td>
+                  <div class="form-check form-switch mb-0">
+                    <input
+                      class="form-check-input active-toggle"
+                      type="checkbox"
+                      role="switch"
+                      [checked]="tournament.isActive"
+                      [attr.aria-label]="'Active: ' + tournament.title"
+                      (change)="setActive(tournament, $any($event.target))"
+                    />
+                  </div>
+                </td>
               </tr>
             } @empty {
               <tr>
-                <td colspan="9" class="text-center text-muted py-4">
+                <td colspan="10" class="text-center text-muted py-4">
                   No tournaments are available.
                 </td>
               </tr>
