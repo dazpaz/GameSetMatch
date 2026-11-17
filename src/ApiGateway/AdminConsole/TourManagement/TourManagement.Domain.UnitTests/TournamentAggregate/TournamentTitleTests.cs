@@ -16,6 +16,32 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 			Assert.Equal("title", exception.ParamName);
 		}
 
+		[Theory]
+		[InlineData("Game<Set>Match")]
+		[InlineData("Open\nFinals")]
+		[InlineData("Open\tFinals")]
+		[InlineData("Open@Home")]
+		[InlineData("Open;DROP")]
+		[InlineData("Open\u200BFinals")]
+		public void Create_WithInvalidCharacters_ThrowsArgumentException(string title)
+		{
+			var exception = Assert.ThrowsAny<ArgumentException>(() => TournamentTitle.Create(title));
+
+			Assert.Equal("title", exception.ParamName);
+		}
+
+		[Theory]
+		[InlineData("Game Set Match Open")]
+		[InlineData("St. Mary's Cup (Men & Women)")]
+		[InlineData("Roland-Garros 2025: Finals!")]
+		[InlineData("Open d'Été, Paris")]
+		public void Create_WithValidCharacters_Succeeds(string title)
+		{
+			var result = TournamentTitle.Create(title);
+
+			Assert.Equal(title, result);
+		}
+
 		[Fact]
 		public void Create_WithMaxLengthTitle_Succeeds()
 		{
