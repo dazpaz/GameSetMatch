@@ -184,12 +184,6 @@
                   >
                     {{ tournament.title }}
                   </a>
-                  @if (!tournament.isActive) {
-                    <span class="ms-2 text-secondary">
-                      <i class="fa-solid fa-ban" aria-hidden="true"></i>
-                      <span class="visually-hidden">Inactive</span>
-                    </span>
-                  }
                 </th>
                 @if (showInactive()) {
                   <td>
