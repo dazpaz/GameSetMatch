@@ -23,7 +23,7 @@ namespace TourManagement.Domain.TournamentAggregate
 			Guard.Against.NullOrWhiteSpace(title, nameof(title));
 			title = title.Trim(); 
 			Guard.Against.OutOfRange(title.Length, nameof(title), 1, MaxLength);
-						Guard.Against.InvalidFormat(title, nameof(title), AllowedCharactersPattern);
+			Guard.Against.InvalidFormat(title, nameof(title), AllowedCharactersPattern);
 	
 			return new TournamentTitle(title);
 		}
