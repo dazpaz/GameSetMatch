@@ -5,6 +5,11 @@ namespace TourManagement.Domain.TournamentAggregate
 {
 	public sealed class TournamentTitle : ValueObject<TournamentTitle>
 	{
+		public static readonly int MaxLength = 60;
+
+		public static implicit operator string(TournamentTitle title) => title.Value;
+		public static explicit operator TournamentTitle(string title) => Create(title);
+
 		public string Value { get; }
 
 		private TournamentTitle(string value)
@@ -14,7 +19,10 @@ namespace TourManagement.Domain.TournamentAggregate
 
 		public static TournamentTitle Create(string title)
 		{
-			title = Guard.Against.NullOrWhiteSpace(title);
+			Guard.Against.NullOrWhiteSpace(title, nameof(title));
+			title = title.Trim(); 
+			Guard.Against.OutOfRange(title.Length, nameof(title), 1, MaxLength);
+	
 			return new TournamentTitle(title);
 		}
 

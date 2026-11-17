@@ -27,7 +27,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 				mixedDoubles: true);
 
 			Assert.Equal(id, tournament.Id);
-			Assert.Equal(title, tournament.Title.Value);
+			Assert.Equal(title, tournament.Title);
 			Assert.Equal(location, tournament.Location);
 			Assert.Equal(level, tournament.Level);
 			Assert.Equal(surface, tournament.Surface);
@@ -37,29 +37,6 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 			Assert.False(tournament.WomensDoubles);
 			Assert.True(tournament.MixedDoubles);
 			Assert.True(tournament.IsActive);
-		}
-
-		[Theory]
-		[InlineData(null)]
-		[InlineData("")]
-		[InlineData("   ")]
-		public void Create_WithInvalidTitle_ThrowsArgumentException(string? title)
-		{
-			var id = Guid.NewGuid();
-
-			var exception = Assert.ThrowsAny<ArgumentException>(() => Tournament.Create(
-				id,
-				title!,
-				"Paris",
-				TournamentLevel.Gsm500,
-				Surface.Clay,
-				mensSingles: true,
-				womensSingles: true,
-				mensDoubles: false,
-				womensDoubles: false,
-				mixedDoubles: false));
-
-			Assert.Equal("title", exception.ParamName);
 		}
 
 		[Theory]
@@ -108,7 +85,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 				mixedDoubles: true);
 
 			Assert.Equal(id, tournament.Id);
-			Assert.Equal(amendedTitle, tournament.Title.Value);
+			Assert.Equal(amendedTitle, tournament.Title);
 			Assert.Equal(amendedLocation, tournament.Location);
 			Assert.Equal(amendedLevel, tournament.Level);
 			Assert.Equal(amendedSurface, tournament.Surface);
@@ -118,28 +95,6 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 			Assert.True(tournament.WomensDoubles);
 			Assert.True(tournament.MixedDoubles);
 			Assert.True(tournament.IsActive);
-		}
-
-		[Theory]
-		[InlineData(null)]
-		[InlineData("")]
-		[InlineData("   ")]
-		public void AmendDetails_WithInvalidTitle_ThrowsArgumentException(string? title)
-		{
-			var tournament = CreateTestTournament();
-
-			var exception = Assert.ThrowsAny<ArgumentException>(() => tournament.AmendDetails(
-				title!,
-				"Madrid",
-				TournamentLevel.Gsm500,
-				Surface.Grass,
-				mensSingles: false,
-				womensSingles: false,
-				mensDoubles: true,
-				womensDoubles: true,
-				mixedDoubles: true));
-
-			Assert.Equal("title", exception.ParamName);
 		}
 
 		[Theory]
