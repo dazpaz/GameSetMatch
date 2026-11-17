@@ -27,7 +27,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 				mixedDoubles: true);
 
 			Assert.Equal(id, tournament.Id);
-			Assert.Equal(title, tournament.Title);
+			Assert.Equal(title, tournament.Title.Value);
 			Assert.Equal(location, tournament.Location);
 			Assert.Equal(level, tournament.Level);
 			Assert.Equal(surface, tournament.Surface);
@@ -108,7 +108,7 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 				mixedDoubles: true);
 
 			Assert.Equal(id, tournament.Id);
-			Assert.Equal(amendedTitle, tournament.Title);
+			Assert.Equal(amendedTitle, tournament.Title.Value);
 			Assert.Equal(amendedLocation, tournament.Location);
 			Assert.Equal(amendedLevel, tournament.Level);
 			Assert.Equal(amendedSurface, tournament.Surface);

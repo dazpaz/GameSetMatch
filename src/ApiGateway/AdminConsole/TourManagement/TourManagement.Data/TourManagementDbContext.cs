@@ -14,7 +14,8 @@ namespace TourManagement.Data
 				builder.ToTable("Tournaments");
 				builder.HasKey(t => t.Id);
 				builder.Property(t => t.Id).ValueGeneratedNever();
-				builder.Property(t => t.Title).IsRequired().HasMaxLength(200);
+				builder.Property(t => t.Title).IsRequired().HasMaxLength(200)
+					.HasConversion(t => t.Value, v => TournamentTitle.Create(v));
 				builder.Property(t => t.Location).IsRequired().HasMaxLength(200);
 			});
 		}
