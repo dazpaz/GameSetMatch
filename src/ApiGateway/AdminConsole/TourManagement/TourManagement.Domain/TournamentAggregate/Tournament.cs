@@ -7,7 +7,7 @@ namespace TourManagement.Domain.TournamentAggregate
 	public class Tournament : AggregateRoot<Guid>
 	{
 		public TournamentTitle Title { get; private set; } = null!;
-		public string Location { get; private set; } = string.Empty;
+		public TournamentLocation Location { get; private set; } = null!;
 		public TournamentLevel Level { get; private set; }
 		public Surface Surface { get; private set; }
 		public bool MensSingles { get; private set; }
@@ -30,12 +30,12 @@ namespace TourManagement.Domain.TournamentAggregate
 			bool mensDoubles, bool womensDoubles, bool mixedDoubles)
 		{
 			var tournamentTitle = TournamentTitle.Create(title);
-			location = Guard.Against.NullOrWhiteSpace(location);
+			var tournamentLocation = TournamentLocation.Create(location);
 
 			return new Tournament(id)
 			{
 				Title = tournamentTitle,
-				Location = location,
+				Location = tournamentLocation,
 				Level = level,
 				Surface = surface,
 				MensSingles = mensSingles,
@@ -52,10 +52,10 @@ namespace TourManagement.Domain.TournamentAggregate
 			bool mensDoubles, bool womensDoubles, bool mixedDoubles)
 		{
 			var tournamentTitle = TournamentTitle.Create(title);
-			location = Guard.Against.NullOrWhiteSpace(location);
+			var tournamentLocation = TournamentLocation.Create(location);
 
 			Title = tournamentTitle;
-			Location = location;
+			Location = tournamentLocation;
 			Level = level;
 			Surface = surface;
 			MensSingles = mensSingles;
