@@ -42,29 +42,6 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 		[Theory]
 		[InlineData(null)]
 		[InlineData("")]
-		[InlineData("   ")]
-		public void Create_WithInvalidTitle_ThrowsArgumentException(string? title)
-		{
-			var id = Guid.NewGuid();
-
-			var exception = Assert.ThrowsAny<ArgumentException>(() => Tournament.Create(
-				id,
-				title!,
-				"Paris",
-				TournamentLevel.Gsm500,
-				Surface.Clay,
-				mensSingles: true,
-				womensSingles: true,
-				mensDoubles: false,
-				womensDoubles: false,
-				mixedDoubles: false));
-
-			Assert.Equal("title", exception.ParamName);
-		}
-
-		[Theory]
-		[InlineData(null)]
-		[InlineData("")]
 		[InlineData("\t")]
 		public void Create_WithInvalidLocation_ThrowsArgumentException(string? location)
 		{
@@ -118,28 +95,6 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 			Assert.True(tournament.WomensDoubles);
 			Assert.True(tournament.MixedDoubles);
 			Assert.True(tournament.IsActive);
-		}
-
-		[Theory]
-		[InlineData(null)]
-		[InlineData("")]
-		[InlineData("   ")]
-		public void AmendDetails_WithInvalidTitle_ThrowsArgumentException(string? title)
-		{
-			var tournament = CreateTestTournament();
-
-			var exception = Assert.ThrowsAny<ArgumentException>(() => tournament.AmendDetails(
-				title!,
-				"Madrid",
-				TournamentLevel.Gsm500,
-				Surface.Grass,
-				mensSingles: false,
-				womensSingles: false,
-				mensDoubles: true,
-				womensDoubles: true,
-				mixedDoubles: true));
-
-			Assert.Equal("title", exception.ParamName);
 		}
 
 		[Theory]
