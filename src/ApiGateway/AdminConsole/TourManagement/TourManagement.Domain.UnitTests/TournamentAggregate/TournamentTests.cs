@@ -39,6 +39,47 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 			Assert.True(tournament.IsActive);
 		}
 
+		[Fact]
+		public void Create_WithEmptyId_ThrowsArgumentException()
+		{
+			var exception = Assert.ThrowsAny<ArgumentException>(() => Tournament.Create(
+				Guid.Empty,
+				"Masters",
+				"London",
+				TournamentLevel.Gsm250,
+				Surface.Hard,
+				mensSingles: true,
+				womensSingles: false,
+				mensDoubles: true,
+				womensDoubles: false,
+				mixedDoubles: false));
+
+			Assert.Equal("id", exception.ParamName);
+		}
+
+		[Theory]
+		[InlineData(null)]
+		[InlineData("")]
+		[InlineData("\t")]
+		public void Create_WithInvalidTitle_ThrowsArgumentException(string? title)
+		{
+			var id = Guid.NewGuid();
+
+			var exception = Assert.ThrowsAny<ArgumentException>(() => Tournament.Create(
+				id,
+				title!,
+				"London",
+				TournamentLevel.Gsm250,
+				Surface.Hard,
+				mensSingles: true,
+				womensSingles: false,
+				mensDoubles: true,
+				womensDoubles: false,
+				mixedDoubles: false));
+
+			Assert.Equal("title", exception.ParamName);
+		}
+
 		[Theory]
 		[InlineData(null)]
 		[InlineData("")]
@@ -60,6 +101,24 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 				mixedDoubles: false));
 
 			Assert.Equal("location", exception.ParamName);
+		}
+
+		[Fact]
+		public void Create_WithNoEvents_ThrowsArgumentException()
+		{
+			var exception = Assert.Throws<ArgumentException>(() => Tournament.Create(
+				Guid.NewGuid(),
+				"Masters",
+				"London",
+				TournamentLevel.Gsm250,
+				Surface.Hard,
+				mensSingles: false,
+				womensSingles: false,
+				mensDoubles: false,
+				womensDoubles: false,
+				mixedDoubles: false));
+
+			Assert.Equal("At least one event must be included.", exception.Message);
 		}
 
 		[Fact]
@@ -85,8 +144,8 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 				mixedDoubles: true);
 
 			Assert.Equal(id, tournament.Id);
-			Assert.Equal(amendedTitle, tournament.Title);
-			Assert.Equal(amendedLocation, tournament.Location);
+			Assert.Equal(amendedTitle, tournament.Title.Value);
+			Assert.Equal(amendedLocation, tournament.Location.Value);
 			Assert.Equal(amendedLevel, tournament.Level);
 			Assert.Equal(amendedSurface, tournament.Surface);
 			Assert.False(tournament.MensSingles);
@@ -95,6 +154,28 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 			Assert.True(tournament.WomensDoubles);
 			Assert.True(tournament.MixedDoubles);
 			Assert.True(tournament.IsActive);
+		}
+
+		[Theory]
+		[InlineData(null)]
+		[InlineData("")]
+		[InlineData("\t")]
+		public void AmendDetails_WithInvalidTitle_ThrowsArgumentException(string? title)
+		{
+			var tournament = CreateTestTournament();
+
+			var exception = Assert.ThrowsAny<ArgumentException>(() => tournament.AmendDetails(
+				title!,
+				"New York",
+				TournamentLevel.Gsm500,
+				Surface.Grass,
+				mensSingles: false,
+				womensSingles: false,
+				mensDoubles: true,
+				womensDoubles: true,
+				mixedDoubles: true));
+
+			Assert.Equal("title", exception.ParamName);
 		}
 
 		[Theory]
@@ -117,6 +198,25 @@ namespace TourManagement.Domain.UnitTests.TournamentAggregate
 				mixedDoubles: true));
 
 			Assert.Equal("location", exception.ParamName);
+		}
+
+		[Fact]
+		public void AmendDetails_WithNoEvents_ThrowsArgumentException()
+		{
+			var tournament = CreateTestTournament();
+
+			var exception = Assert.Throws<ArgumentException>(() => tournament.AmendDetails(
+				"Updated Open",
+				"New York",
+				TournamentLevel.Gsm500,
+				Surface.Grass,
+				mensSingles: false,
+				womensSingles: false,
+				mensDoubles: false,
+				womensDoubles: false,
+				mixedDoubles: false));
+
+			Assert.Equal("At least one event must be included.", exception.Message);
 		}
 
 		[Fact]
