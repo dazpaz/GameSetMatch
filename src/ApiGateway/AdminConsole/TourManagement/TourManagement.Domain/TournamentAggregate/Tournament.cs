@@ -31,6 +31,8 @@ namespace TourManagement.Domain.TournamentAggregate
 		{
 			var tournamentTitle = TournamentTitle.Create(title);
 			var tournamentLocation = TournamentLocation.Create(location);
+			Guard.Against.Default(id, nameof(id));
+			Guard.Against.NoEventsIncluded(mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles);
 
 			return new Tournament(id)
 			{
@@ -53,6 +55,7 @@ namespace TourManagement.Domain.TournamentAggregate
 		{
 			var tournamentTitle = TournamentTitle.Create(title);
 			var tournamentLocation = TournamentLocation.Create(location);
+			Guard.Against.NoEventsIncluded(mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles);
 
 			Title = tournamentTitle;
 			Location = tournamentLocation;
