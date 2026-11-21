@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "AdminConsole.WebApi.IntegrationTests": {
+      "commandName": "Project",
+      "nativeDebugging": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
