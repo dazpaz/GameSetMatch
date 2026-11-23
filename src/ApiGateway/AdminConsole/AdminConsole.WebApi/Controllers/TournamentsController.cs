@@ -19,8 +19,8 @@ namespace AdminConsole.WebApi.Controllers
 		{
 			var result = _queryTournament.GetAllTournaments();
 
-			if (result.IsFailure) return BadRequest(result.Error);
-			
+			if (result.IsFailure) return StatusCode(StatusCodes.Status500InternalServerError, result.Error);
+
 			return Ok(result.Value);
 		}
 
@@ -29,7 +29,7 @@ namespace AdminConsole.WebApi.Controllers
 		{
 			var result = _queryTournament.GetTournamentById(id);
 
-			if (result.IsFailure) return BadRequest(result.Error);
+			if (result.IsFailure) return StatusCode(StatusCodes.Status500InternalServerError, result.Error);
 			if (result.Value == null) return NotFound();
 
 			return Ok(result.Value);
