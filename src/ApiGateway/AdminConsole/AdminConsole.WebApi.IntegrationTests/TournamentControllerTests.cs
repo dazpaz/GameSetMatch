@@ -7,6 +7,9 @@ namespace AdminConsole.WebApi.IntegrationTests
 {
 	public class TournamentControllerTests : IClassFixture<WebApplicationFactory<Program>>
 	{
+		private static readonly Guid FrenchOpenId = new("00000000-0000-0000-0000-000000000009");
+		private static readonly Guid StuttgartOpenId = new("00000000-0000-0000-0000-000000000006");
+
 		private readonly WebApplicationFactory<Program> _factory;
 
 		public TournamentControllerTests(WebApplicationFactory<Program> factory)
@@ -15,7 +18,7 @@ namespace AdminConsole.WebApi.IntegrationTests
 		}
 
 		[Fact]
-		public async Task GetAllTournaments_ReturnsListOfAllTournamentsIncludingActiveAndInactive()
+		public async Task GetAllTournaments_ReturnsListOfAllActiveAndInactiveTournaments()
 		{
 			// Arrange
 			var client = _factory.CreateClient();
@@ -24,22 +27,9 @@ namespace AdminConsole.WebApi.IntegrationTests
 			var response = await client.GetAsync("/tournaments", TestContext.Current.CancellationToken);
 
 			// Assert
-			TheResponseIndicatedTheRequestWasSuccess(response);
+			TheResponseIndicatesTheRequestWasSuccessful(response);
 			var tournaments = await GetTournamentsFromResponse(response);
 			TheCorrectNumberofActiveAndInactiveTournamentsAreReturned(tournaments);
-		}
-
-		private static void TheResponseIndicatedTheRequestWasSuccess(HttpResponseMessage response)
-		{
-			Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
-		}
-
-		private static void TheCorrectNumberofActiveAndInactiveTournamentsAreReturned(TournamentDto[]? tournaments)
-		{
-			Assert.NotNull(tournaments);
-			Assert.Equal(10, tournaments.Length);
-			Assert.Equal(8, tournaments.Count(t => t.IsActive));
-			Assert.Equal(2, tournaments.Count(t => !t.IsActive));
 		}
 
 		[Fact]
@@ -50,23 +40,12 @@ namespace AdminConsole.WebApi.IntegrationTests
 
 			// Act
 			var response = await client.GetAsync("/tournaments", TestContext.Current.CancellationToken);
-			var json = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
 			// Assert
-			Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+			TheResponseIndicatesTheRequestWasSuccessful(response);
 			var tournaments = await GetTournamentsFromResponse(response);
-			Assert.NotNull(tournaments);
-
-			Assert.Equal(4, tournaments.Count(t => t.Level == TournamentLevel.GsmSlam));
-			Assert.Equal(3, tournaments.Count(t => t.Level == TournamentLevel.Gsm1000));
-			Assert.Equal(1, tournaments.Count(t => t.Level == TournamentLevel.Gsm500));
-			Assert.Equal(1, tournaments.Count(t => t.Level == TournamentLevel.Gsm250));
-			Assert.Equal(1, tournaments.Count(t => t.Level == TournamentLevel.Gsm125));
-
-			Assert.Equal(2, tournaments.Count(t => t.Surface == Surface.Grass));
-			Assert.Equal(3, tournaments.Count(t => t.Surface == Surface.Clay));
-			Assert.Equal(4, tournaments.Count(t => t.Surface == Surface.Hard));
-			Assert.Equal(1, tournaments.Count(t => t.Surface == Surface.Carpet));
+			TheTournamentsReturnedHaveTheirLevelValueSet(tournaments);
+			TheTournamentsReturnedHaveTheirSurfaceValueSet(tournaments);
 		}
 
 		[Fact]
@@ -77,54 +56,26 @@ namespace AdminConsole.WebApi.IntegrationTests
 
 			// Act
 			var response = await client.GetAsync("/tournaments", TestContext.Current.CancellationToken);
-			var json = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
 			// Assert
-			Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
-			var tournaments = await GetTournamentsFromResponse(response);
-			Assert.NotNull(tournaments);
-			var frenchOpen = tournaments.FirstOrDefault(t => t.Title == "French Open");
-			Assert.NotNull(frenchOpen);
-
-			Assert.Equal("French Open", frenchOpen.Title);
-			Assert.Equal("Paris, France", frenchOpen.Location);
-			Assert.Equal(TournamentLevel.GsmSlam, frenchOpen.Level);
-			Assert.Equal(Surface.Clay, frenchOpen.Surface);
-			Assert.True(frenchOpen.MensSingles);
-			Assert.True(frenchOpen.WomensSingles);
-			Assert.True(frenchOpen.MensDoubles);
-			Assert.True(frenchOpen.WomensDoubles);
-			Assert.True(frenchOpen.MixedDoubles);
-			Assert.True(frenchOpen.IsActive);
+			TheResponseIndicatesTheRequestWasSuccessful(response);
+			var frenchOpen = await GetTournamentFromResponseByTitle(response, "French Open");
+			ValidateFrenchOpenHasTheCorrectValues(frenchOpen);
 		}
 
 		[Fact]
-		public async Task GetSingleTournament_ReturnsDetailsOfCorrectTournament()
+		public async Task GetSingleTournament_ReturnsCorrectDetailsOfRequestedTournament()
 		{
 			// Arrange
 			var client = _factory.CreateClient();
-			var tournamentId = "00000000-0000-0000-0000-000000000006";
 
 			// Act
-			var response = await client.GetAsync($"/tournaments/{tournamentId}", TestContext.Current.CancellationToken);
-			var json = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
-			
-			// Assert
-			Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
-			var options = new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web);
-			var tournament = await response.Content.ReadFromJsonAsync<TournamentDto>(options, TestContext.Current.CancellationToken);
+			var response = await client.GetAsync($"/tournaments/{StuttgartOpenId}", TestContext.Current.CancellationToken);
 
-			Assert.NotNull(tournament);
-			Assert.Equal("Stuttgart Open", tournament.Title);
-			Assert.Equal("Stuttgart, Germany", tournament.Location);
-			Assert.Equal(TournamentLevel.Gsm250, tournament.Level);
-			Assert.Equal(Surface.Grass, tournament.Surface);
-			Assert.False(tournament.MensSingles);
-			Assert.True(tournament.WomensSingles);
-			Assert.False(tournament.MensDoubles);
-			Assert.True(tournament.WomensDoubles);
-			Assert.False(tournament.MixedDoubles);
-			Assert.False(tournament.IsActive);
+			// Assert
+			TheResponseIndicatesTheRequestWasSuccessful(response);
+			TournamentDto? tournament = await GetSingleTournamentFromResponse(response);
+			ValidateStuttgartOpenHasTheCorrectValues(tournament);
 		}
 
 		[Theory]
@@ -140,6 +91,13 @@ namespace AdminConsole.WebApi.IntegrationTests
 
 			// Assert
 			Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+
+			var json = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+			using var document = System.Text.Json.JsonDocument.Parse(json);
+			var title = document.RootElement.GetProperty("title").GetString();
+			var status = document.RootElement.GetProperty("status").GetInt32();
+			Assert.Equal("Not Found", title);
+			Assert.Equal(404, status);
 		}
 
 		[Theory]
@@ -247,6 +205,88 @@ namespace AdminConsole.WebApi.IntegrationTests
 			var options = new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web);
 			var tournaments = await response.Content.ReadFromJsonAsync<TournamentDto[]>(options, TestContext.Current.CancellationToken);
 			return tournaments;
+		}
+
+		private static async Task<TournamentDto?> GetTournamentFromResponseByTitle(HttpResponseMessage response, string title)
+		{
+			var tournaments = await GetTournamentsFromResponse(response);
+			Assert.NotNull(tournaments);
+			var tournament = tournaments.FirstOrDefault(t => t.Title == title);
+			return tournament;
+		}
+
+		private static async Task<TournamentDto?> GetSingleTournamentFromResponse(HttpResponseMessage response)
+		{
+			var options = new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web);
+			var tournament = await response.Content.ReadFromJsonAsync<TournamentDto>(options, TestContext.Current.CancellationToken);
+			return tournament;
+		}
+
+		private static void TheResponseIndicatesTheRequestWasSuccessful(HttpResponseMessage response)
+		{
+			Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+		}
+
+		private static void TheCorrectNumberofActiveAndInactiveTournamentsAreReturned(TournamentDto[]? tournaments)
+		{
+			Assert.NotNull(tournaments);
+			Assert.Equal(10, tournaments.Length);
+			Assert.Equal(8, tournaments.Count(t => t.IsActive));
+			Assert.Equal(2, tournaments.Count(t => !t.IsActive));
+		}
+
+		private static void TheTournamentsReturnedHaveTheirSurfaceValueSet(TournamentDto[]? tournaments)
+		{
+			Assert.NotNull(tournaments);
+			Assert.Equal(2, tournaments.Count(t => t.Surface == Surface.Grass));
+			Assert.Equal(3, tournaments.Count(t => t.Surface == Surface.Clay));
+			Assert.Equal(4, tournaments.Count(t => t.Surface == Surface.Hard));
+			Assert.Equal(1, tournaments.Count(t => t.Surface == Surface.Carpet));
+		}
+
+		private static void TheTournamentsReturnedHaveTheirLevelValueSet(TournamentDto[]? tournaments)
+		{
+			Assert.NotNull(tournaments);
+
+			Assert.Equal(4, tournaments.Count(t => t.Level == TournamentLevel.GsmSlam));
+			Assert.Equal(3, tournaments.Count(t => t.Level == TournamentLevel.Gsm1000));
+			Assert.Equal(1, tournaments.Count(t => t.Level == TournamentLevel.Gsm500));
+			Assert.Equal(1, tournaments.Count(t => t.Level == TournamentLevel.Gsm250));
+			Assert.Equal(1, tournaments.Count(t => t.Level == TournamentLevel.Gsm125));
+		}
+
+		private static void ValidateFrenchOpenHasTheCorrectValues(TournamentDto? frenchOpen)
+		{
+			Assert.NotNull(frenchOpen);
+
+			ValidatePropertiesOfATournament(frenchOpen, FrenchOpenId, "French Open", "Paris, France",
+				TournamentLevel.GsmSlam, Surface.Clay, true, true, true, true, true, true);
+		}
+
+		private static void ValidateStuttgartOpenHasTheCorrectValues(TournamentDto? stuttgartOpen)
+		{
+			Assert.NotNull(stuttgartOpen);
+
+			ValidatePropertiesOfATournament(stuttgartOpen, StuttgartOpenId, "Stuttgart Open",
+				"Stuttgart, Germany", TournamentLevel.Gsm250, Surface.Grass, false, true, false,
+				true, false, false);
+		}
+
+		private static void ValidatePropertiesOfATournament(TournamentDto tournament, Guid tournamentId, 
+			string title, string location, TournamentLevel level, Surface surface, bool mensSingles,
+			bool womensSingles, bool mensDoubles, bool womensDoubles, bool mixedDoubles, bool isActive)
+		{
+			Assert.Equal(tournamentId, tournament.TournamentId);
+			Assert.Equal(title, tournament.Title);
+			Assert.Equal(location, tournament.Location);
+			Assert.Equal(level, tournament.Level);
+			Assert.Equal(surface, tournament.Surface);
+			Assert.Equal(mensSingles, tournament.MensSingles);
+			Assert.Equal(womensSingles, tournament.WomensSingles);
+			Assert.Equal(mensDoubles, tournament.MensDoubles);
+			Assert.Equal(womensDoubles, tournament.WomensDoubles);
+			Assert.Equal(mixedDoubles, tournament.MixedDoubles);
+			Assert.Equal(isActive, tournament.IsActive);
 		}
 	}
 }
