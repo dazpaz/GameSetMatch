@@ -90,14 +90,7 @@ namespace AdminConsole.WebApi.IntegrationTests
 			var response = await client.GetAsync($"/tournaments/{tournamentId}", TestContext.Current.CancellationToken);
 
 			// Assert
-			Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
-
-			var json = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
-			using var document = System.Text.Json.JsonDocument.Parse(json);
-			var title = document.RootElement.GetProperty("title").GetString();
-			var status = document.RootElement.GetProperty("status").GetInt32();
-			Assert.Equal("Not Found", title);
-			Assert.Equal(404, status);
+			await TheResponseIndicatesTheTournamentWasNotFound(response);
 		}
 
 		[Theory]
@@ -112,7 +105,7 @@ namespace AdminConsole.WebApi.IntegrationTests
 			var response = await client.GetAsync($"/tournaments/{tournamentId}", TestContext.Current.CancellationToken);
 
 			// Assert
-			Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+			TheResponseIndicatesTheRequestWasInvalid(response);
 		}
 
 		[Fact]
@@ -126,60 +119,28 @@ namespace AdminConsole.WebApi.IntegrationTests
 			var response = await client.PostAsJsonAsync("/tournaments", newTournament, TestContext.Current.CancellationToken);
 
 			// Assert
-			Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
-			Assert.NotNull(response.Headers.Location);
-
-			var created = await client.GetFromJsonAsync<TournamentDto>(response.Headers.Location, TestContext.Current.CancellationToken);
-			Assert.NotNull(created);
-			Assert.Equal(newTournament.Title, created.Title);
-			Assert.Equal(newTournament.Location, created.Location);
-			Assert.Equal(newTournament.Level, created.Level);
-			Assert.Equal(newTournament.Surface, created.Surface);
+			var location = TheResponseIndicatesTheTournamentWasCreated(response);
+			var created = await GetTournamentFromLocation(client, location);
+			ValidateTournamentHasTheValuesOfTheAddedTournament(created, newTournament);
 
 			// finally, clean up by deleting the tournament - this will have to be done with SQL
 		}
-
-
 
 		[Fact]
 		public async Task UpdateTournament_AfterAdding_UpdatesAllFields()
 		{
 			// Arrange
 			var client = _factory.CreateClient();
-			var addResponse = await client.PostAsJsonAsync("/tournaments", CreateTournamentToAdd(), TestContext.Current.CancellationToken);
-			Assert.Equal(System.Net.HttpStatusCode.Created, addResponse.StatusCode);
-			Assert.NotNull(addResponse.Headers.Location);
-
-			var updateTournament = new UpdateTournamentDto
-			{
-				Title = "Updated Integration Test Open",
-				Location = "Updated City",
-				Level = TournamentLevel.Gsm500,
-				Surface = Surface.Clay,
-				MensSingles = false,
-				WomensSingles = false,
-				MensDoubles = false,
-				WomensDoubles = false,
-				MixedDoubles = true
-			};
+			var location = await AddATournament(client);
+			UpdateTournamentDto updateTournament = CreateTournamentUpdate();
 
 			// Act
-			var updateResponse = await client.PutAsJsonAsync(addResponse.Headers.Location, updateTournament, TestContext.Current.CancellationToken);
+			var updateResponse = await client.PutAsJsonAsync(location, updateTournament, TestContext.Current.CancellationToken);
 
 			// Assert
-			Assert.Equal(System.Net.HttpStatusCode.NoContent, updateResponse.StatusCode);
-
-			var updated = await client.GetFromJsonAsync<TournamentDto>(addResponse.Headers.Location, TestContext.Current.CancellationToken);
-			Assert.NotNull(updated);
-			Assert.Equal(updateTournament.Title, updated.Title);
-			Assert.Equal(updateTournament.Location, updated.Location);
-			Assert.Equal(updateTournament.Level, updated.Level);
-			Assert.Equal(updateTournament.Surface, updated.Surface);
-			Assert.Equal(updateTournament.MensSingles, updated.MensSingles);
-			Assert.Equal(updateTournament.WomensSingles, updated.WomensSingles);
-			Assert.Equal(updateTournament.MensDoubles, updated.MensDoubles);
-			Assert.Equal(updateTournament.WomensDoubles, updated.WomensDoubles);
-			Assert.Equal(updateTournament.MixedDoubles, updated.MixedDoubles);
+			TheResponseIndicatesTheTournamentWasUpdated(updateResponse);
+			var updated = await GetTournamentFromLocation(client, location);
+			ValidateTournamentHasTheValuesOfTheUpdate(updated, updateTournament);
 
 			// finally, clean up by deleting the tournament - this will have to be done with SQL
 		}
@@ -198,6 +159,35 @@ namespace AdminConsole.WebApi.IntegrationTests
 				WomensDoubles = true,
 				MixedDoubles = false
 			};
+		}
+
+		private static UpdateTournamentDto CreateTournamentUpdate()
+		{
+			return new UpdateTournamentDto
+			{
+				Title = "Updated Integration Test Open",
+				Location = "Updated City",
+				Level = TournamentLevel.Gsm500,
+				Surface = Surface.Clay,
+				MensSingles = false,
+				WomensSingles = false,
+				MensDoubles = false,
+				WomensDoubles = false,
+				MixedDoubles = true
+			};
+		}
+
+		private static async Task<Uri> AddATournament(HttpClient client)
+		{
+			var response = await client.PostAsJsonAsync("/tournaments", CreateTournamentToAdd(), TestContext.Current.CancellationToken);
+			return TheResponseIndicatesTheTournamentWasCreated(response);
+		}
+
+		private static async Task<TournamentDto> GetTournamentFromLocation(HttpClient client, Uri location)
+		{
+			var tournament = await client.GetFromJsonAsync<TournamentDto>(location, TestContext.Current.CancellationToken);
+			Assert.NotNull(tournament);
+			return tournament;
 		}
 
 		private static async Task<TournamentDto[]?> GetTournamentsFromResponse(HttpResponseMessage response)
@@ -225,6 +215,56 @@ namespace AdminConsole.WebApi.IntegrationTests
 		private static void TheResponseIndicatesTheRequestWasSuccessful(HttpResponseMessage response)
 		{
 			Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+		}
+
+		private static async Task TheResponseIndicatesTheTournamentWasNotFound(HttpResponseMessage response)
+		{
+			Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+
+			var json = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+			using var document = System.Text.Json.JsonDocument.Parse(json);
+			var title = document.RootElement.GetProperty("title").GetString();
+			var status = document.RootElement.GetProperty("status").GetInt32();
+			Assert.Equal("Not Found", title);
+			Assert.Equal(404, status);
+		}
+
+		private static void TheResponseIndicatesTheRequestWasInvalid(HttpResponseMessage response)
+		{
+			Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+		}
+
+		private static Uri TheResponseIndicatesTheTournamentWasCreated(HttpResponseMessage response)
+		{
+			Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
+			Assert.NotNull(response.Headers.Location);
+			return response.Headers.Location;
+		}
+
+		private static void TheResponseIndicatesTheTournamentWasUpdated(HttpResponseMessage response)
+		{
+			Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
+		}
+
+		private static void ValidateTournamentHasTheValuesOfTheAddedTournament(TournamentDto tournament, AddTournamentDto added)
+		{
+			Assert.Equal(added.Title, tournament.Title);
+			Assert.Equal(added.Location, tournament.Location);
+			Assert.Equal(added.Level, tournament.Level);
+			Assert.Equal(added.Surface, tournament.Surface);
+		}
+
+		private static void ValidateTournamentHasTheValuesOfTheUpdate(TournamentDto tournament, UpdateTournamentDto update)
+		{
+			Assert.Equal(update.Title, tournament.Title);
+			Assert.Equal(update.Location, tournament.Location);
+			Assert.Equal(update.Level, tournament.Level);
+			Assert.Equal(update.Surface, tournament.Surface);
+			Assert.Equal(update.MensSingles, tournament.MensSingles);
+			Assert.Equal(update.WomensSingles, tournament.WomensSingles);
+			Assert.Equal(update.MensDoubles, tournament.MensDoubles);
+			Assert.Equal(update.WomensDoubles, tournament.WomensDoubles);
+			Assert.Equal(update.MixedDoubles, tournament.MixedDoubles);
 		}
 
 		private static void TheCorrectNumberofActiveAndInactiveTournamentsAreReturned(TournamentDto[]? tournaments)
