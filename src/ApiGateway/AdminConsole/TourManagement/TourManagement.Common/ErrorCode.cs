@@ -5,6 +5,7 @@
 		None = 0,
 		Unknown,
 		ValidationFailed,
-		NotFound
+		NotFound,
+		FailedToSaveChanges
 	}
 }

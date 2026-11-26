@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using TourManagement.Application.Commands;
 using TourManagement.Application.Handlers;
 using TourManagement.Application.Queries;
+using TourManagement.Common;
 using TourManagement.Contract;
 
 namespace AdminConsole.WebApi.Controllers
@@ -42,8 +43,11 @@ namespace AdminConsole.WebApi.Controllers
 			if (command.IsFailure) return BadRequest(command.Error);
 
 			var result = _tournamentCommandHandler.HandleAddTournamentCommand(command.Value);
+
 			if (result.IsFailure)
-				return StatusCode(StatusCodes.Status500InternalServerError, result.Error);
+				return result.Error == ErrorCode.NotFound
+					? NotFound()
+					: StatusCode(StatusCodes.Status500InternalServerError, result.Error);
 
 			return CreatedAtAction(nameof(GetTournament), new { id = result.Value }, null);
 		}
@@ -55,8 +59,11 @@ namespace AdminConsole.WebApi.Controllers
 			if (command.IsFailure) return BadRequest(command.Error);
 
 			var result = _tournamentCommandHandler.HandleUpdateTournamentCommand(command.Value);
+
 			if (result.IsFailure)
-				return StatusCode(StatusCodes.Status500InternalServerError, result.Error);
+				return result.Error == ErrorCode.NotFound
+					? NotFound()
+					: StatusCode(StatusCodes.Status500InternalServerError, result.Error);
 
 			return NoContent();
 		}
@@ -68,8 +75,11 @@ namespace AdminConsole.WebApi.Controllers
 			if (command.IsFailure) return BadRequest(command.Error);
 
 			var result = _tournamentCommandHandler.HandleSetTournamentActiveCommand(command.Value);
+
 			if (result.IsFailure)
-				return StatusCode(StatusCodes.Status500InternalServerError, result.Error);
+				return result.Error == ErrorCode.NotFound
+					? NotFound()
+					: StatusCode(StatusCodes.Status500InternalServerError, result.Error);
 
 			return NoContent();
 		}

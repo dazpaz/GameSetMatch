@@ -1,4 +1,4 @@
-using Common.FunctionalExtensions;
+using TourManagement.Common;
 using TourManagement.Contract;
 
 namespace TourManagement.Application.Commands
@@ -17,7 +17,8 @@ namespace TourManagement.Application.Commands
 		public static Result<SetTournamentActiveCommand> Create(Guid id, bool isActive)
 		{
 			if (id == Guid.Empty)
-				return Result<SetTournamentActiveCommand>.Failure("Id cannot be empty");
+				return Result<SetTournamentActiveCommand>
+					.Failure(ErrorCode.ValidationFailed, "Id cannot be empty");
 
 			return Result<SetTournamentActiveCommand>.Success(new SetTournamentActiveCommand(id, isActive));
 		}

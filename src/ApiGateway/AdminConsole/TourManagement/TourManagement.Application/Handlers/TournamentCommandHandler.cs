@@ -1,4 +1,4 @@
-﻿using Common.FunctionalExtensions;
+﻿using TourManagement.Common;
 using TourManagement.Application.Commands;
 using TourManagement.Application.Repository;
 using TourManagement.Domain.TournamentAggregate;
@@ -27,7 +27,7 @@ namespace TourManagement.Application.Handlers
 			_uow.TournamentRepository.Add(tournament);
 			
 			var saveResult =_uow.SaveChanges();
-			if (saveResult.IsFailure) return Result<Guid>.Failure(saveResult.Error);
+			if (saveResult.IsFailure) return Result<Guid>.Failure(ErrorCode.FailedToSaveChanges);
 
 			return Result<Guid>.Success(id);
 		}
@@ -36,14 +36,14 @@ namespace TourManagement.Application.Handlers
 		{
 			var tournament = _uow.TournamentRepository.GetById(command.Id);
 			if (tournament == null)
-				return Result.Failure($"Tournament with Id {command.Id} not found.");
+				return Result.Failure(ErrorCode.NotFound, $"Tournament with Id {command.Id} not found.");
 
 			tournament.AmendDetails(command.Title, command.Location, command.Level, command.Surface,
 				command.MensSingles, command.WomensSingles, command.MensDoubles, command.WomensDoubles,
 				command.MixedDoubles);
 
 			var saveResult = _uow.SaveChanges();
-			if (saveResult.IsFailure) return Result.Failure(saveResult.Error);
+			if (saveResult.IsFailure) return Result.Failure(ErrorCode.FailedToSaveChanges);
 			
 			return Result.Success();
 		}
@@ -52,7 +52,7 @@ namespace TourManagement.Application.Handlers
 		{
 			var tournament = _uow.TournamentRepository.GetById(command.Id);
 			if (tournament == null)
-				return Result.Failure($"Tournament with Id {command.Id} not found.");
+				return Result.Failure(ErrorCode.NotFound, $"Tournament with Id {command.Id} not found.");
 
 			if (command.IsActive)
 				tournament.SetActive();
@@ -60,7 +60,7 @@ namespace TourManagement.Application.Handlers
 				tournament.SetDeactive();
 
 			var saveResult = _uow.SaveChanges();
-			if (saveResult.IsFailure) return Result.Failure(saveResult.Error);
+			if (saveResult.IsFailure) return Result.Failure(ErrorCode.FailedToSaveChanges);
 
 			return Result.Success();
 		}
