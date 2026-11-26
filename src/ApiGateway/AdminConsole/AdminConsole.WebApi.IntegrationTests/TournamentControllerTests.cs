@@ -139,6 +139,70 @@ namespace AdminConsole.WebApi.IntegrationTests
 			// finally, clean up by deleting the tournament - this will have to be done with SQL
 		}
 
+		[Theory]
+		[InlineData("", "Test City", 1, 1, "Title cannot be blank")]
+		[InlineData("   ", "Test City", 1, 1, "Title cannot be blank")]
+		[InlineData("Integration Test Open", "", 1, 1, "Location cannot be blank")]
+		[InlineData("Integration Test Open", "   ", 1, 1, "Location cannot be blank")]
+		[InlineData("Integration Test Open", "Test City", 9999, 1, "Invalid tournament level.")]
+		[InlineData("Integration Test Open", "Test City", 1, 9999, "Invalid surface.")]
+		public async Task AddTournament_WithInvalidData_ReturnsBadRequest_WithValidationMessage(
+			string title, string location, int level, int surface, string expectedMessage)
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+			AddTournamentDto invalidTournament = CreateTournamentToAdd();
+			invalidTournament.Title = title;
+			invalidTournament.Location = location;
+			invalidTournament.Level = (TournamentLevel)level;
+			invalidTournament.Surface = (Surface)surface;
+
+			// Act
+			var response = await client.PostAsJsonAsync("/tournaments", invalidTournament, TestContext.Current.CancellationToken);
+
+			// Assert
+			TheResponseIndicatesTheRequestWasInvalid(response);
+			var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+			Assert.Contains(expectedMessage, body);
+		}
+
+		[Fact]
+		public async Task AddTournament_WithNoEventsIncluded_ReturnsBadRequest_WithValidationMessage()
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+			AddTournamentDto invalidTournament = CreateTournamentToAdd();
+			invalidTournament.MensSingles = false;
+			invalidTournament.WomensSingles = false;
+			invalidTournament.MensDoubles = false;
+			invalidTournament.WomensDoubles = false;
+			invalidTournament.MixedDoubles = false;
+
+			// Act
+			var response = await client.PostAsJsonAsync("/tournaments", invalidTournament, TestContext.Current.CancellationToken);
+
+			// Assert
+			TheResponseIndicatesTheRequestWasInvalid(response);
+			var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+			Assert.Contains("At least one event must be included.", body);
+		}
+
+		[Fact]
+		public async Task AddTournament_WithInvalidData_DoesNotAddTheTournament()
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+			AddTournamentDto invalidTournament = CreateTournamentToAdd();
+			invalidTournament.Title = " ";
+
+			// Act
+			var response = await client.PostAsJsonAsync("/tournaments", invalidTournament, TestContext.Current.CancellationToken);
+
+			// Assert
+			TheResponseIndicatesTheRequestWasInvalid(response);
+			Assert.Null(response.Headers.Location);
+		}
+
 		[Fact]
 		public async Task UpdateTournament_AfterAdding_UpdatesAllFields()
 		{

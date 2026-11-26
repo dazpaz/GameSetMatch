@@ -50,6 +50,10 @@ namespace TourManagement.Application.Commands
 				return Result<AddTournamentCommand>
 					.Failure(ErrorCode.ValidationFailed, "Invalid surface.");
 
+			if (!(mensSingles || womensSingles || mensDoubles || womensDoubles || mixedDoubles))
+				return Result<AddTournamentCommand>
+					.Failure(ErrorCode.ValidationFailed, "At least one event must be included.");
+
 			var command = new AddTournamentCommand(title, location, level, surface,
 				mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles);
 
