@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 using TourManagement.Common;
 using TourManagement.Contract;
+using TourManagement.Data;
 
 namespace AdminConsole.WebApi.IntegrationTests
 {
-	public class TournamentControllerTests : IClassFixture<WebApplicationFactory<Program>>
+	public class TournamentControllerTests : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
 	{
 		private static readonly Guid FrenchOpenId = new("00000000-0000-0000-0000-000000000009");
 		private static readonly Guid StuttgartOpenId = new("00000000-0000-0000-0000-000000000006");
@@ -15,6 +18,16 @@ namespace AdminConsole.WebApi.IntegrationTests
 		public TournamentControllerTests(WebApplicationFactory<Program> factory)
 		{
 			_factory = factory;
+		}
+
+		public ValueTask InitializeAsync() => ValueTask.CompletedTask;
+
+		public async ValueTask DisposeAsync()
+		{
+			using var scope = _factory.Services.CreateScope();
+			var dbContext = scope.ServiceProvider.GetRequiredService<TourManagementDbContext>();
+			await dbContext.Database.ExecuteSqlRawAsync(
+				"DELETE FROM Tournaments WHERE Title LIKE '%Integration Test%'");
 		}
 
 		[Fact]
