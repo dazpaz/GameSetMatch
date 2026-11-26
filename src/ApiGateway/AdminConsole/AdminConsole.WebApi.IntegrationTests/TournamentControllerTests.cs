@@ -158,6 +158,75 @@ namespace AdminConsole.WebApi.IntegrationTests
 			// finally, clean up by deleting the tournament - this will have to be done with SQL
 		}
 
+		[Fact]
+		public async Task SetTournamentActive_AfterAdding_CanBeDeactivated()
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+			Uri location = await CreateATournamentAndEnsureItIsActive(client);
+
+			// Act
+			var response = await client.PatchAsJsonAsync($"{location}/active",
+				new SetTournamentActiveDto { IsActive = false }, TestContext.Current.CancellationToken);
+
+			// Assert
+			TheResponseIndicatesTheTournamentWasUpdated(response);
+			var updated = await GetTournamentFromLocation(client, location);
+			Assert.False(updated.IsActive);
+		}
+
+		[Fact]
+		public async Task SetTournamentActive_WhenInactive_CanBeActivated()
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+			var location = await AddATournament(client);
+			await DeactivateTournamentAndValidateItIsInactive(client, location);
+
+			// Act
+			var response = await client.PatchAsJsonAsync($"{location}/active",
+				new SetTournamentActiveDto { IsActive = true }, TestContext.Current.CancellationToken);
+
+			// Assert
+			TheResponseIndicatesTheTournamentWasUpdated(response);
+			var updated = await GetTournamentFromLocation(client, location);
+			Assert.True(updated.IsActive);
+		}
+
+		[Theory]
+		[InlineData("{\"isActive\": \"not-a-bool\"}")]
+		[InlineData("not json")]
+		public async Task SetTournamentActive_WithInvalidPayload_ReturnsBadRequest(string payload)
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+			var location = await AddATournament(client);
+			using var content = new StringContent(payload, System.Text.Encoding.UTF8, "application/json");
+
+			// Act
+			var response = await client.PatchAsync($"{location}/active", content, TestContext.Current.CancellationToken);
+
+			// Assert
+			TheResponseIndicatesTheRequestWasInvalid(response);
+			var tournament = await GetTournamentFromLocation(client, location);
+			Assert.True(tournament.IsActive);
+		}
+
+		[Fact]
+		public async Task SetTournamentActive_ForTournamentThatDoesNotExist_ReturnsNotFound()
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+			var nonExistentId = new Guid("00000000-0000-0000-0000-111111111111");
+
+			// Act
+			var response = await client.PatchAsJsonAsync($"/tournaments/{nonExistentId}/active",
+				new SetTournamentActiveDto { IsActive = false }, TestContext.Current.CancellationToken);
+
+			// Assert
+			await TheResponseIndicatesTheTournamentWasNotFound(response);
+		}
+
 		private static AddTournamentDto CreateTournamentToAdd()
 		{
 			return new AddTournamentDto
@@ -223,6 +292,23 @@ namespace AdminConsole.WebApi.IntegrationTests
 			var options = new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web);
 			var tournament = await response.Content.ReadFromJsonAsync<TournamentDto>(options, TestContext.Current.CancellationToken);
 			return tournament;
+		}
+
+		private static async Task<Uri> CreateATournamentAndEnsureItIsActive(HttpClient client)
+		{
+			var location = await AddATournament(client);
+			var added = await GetTournamentFromLocation(client, location);
+			Assert.True(added.IsActive);
+			return location;
+		}
+
+		private static async Task DeactivateTournamentAndValidateItIsInactive(HttpClient client, Uri location)
+		{
+			var deactivateResponse = await client.PatchAsJsonAsync($"{location}/active",
+				new SetTournamentActiveDto { IsActive = false }, TestContext.Current.CancellationToken);
+			TheResponseIndicatesTheTournamentWasUpdated(deactivateResponse);
+			var deactivated = await GetTournamentFromLocation(client, location);
+			Assert.False(deactivated.IsActive);
 		}
 
 		private static void TheResponseIndicatesTheRequestWasSuccessful(HttpResponseMessage response)

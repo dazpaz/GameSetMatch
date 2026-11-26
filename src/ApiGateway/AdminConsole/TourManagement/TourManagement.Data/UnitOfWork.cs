@@ -1,4 +1,4 @@
-using Common.FunctionalExtensions;
+using TourManagement.Common;
 using Microsoft.EntityFrameworkCore;
 using TourManagement.Application.Repository;
 using TourManagement.Domain.TournamentAggregate;
@@ -36,15 +36,15 @@ namespace TourManagement.Data
 				var changes = _context.SaveChanges();
 				return Result<int>.Success(changes);
 			}
-			catch (DbUpdateConcurrencyException ex)
+			catch (DbUpdateConcurrencyException)
 			{
 				// Log the concurrency exception details for debugging purposes
-				return Result<int>.Failure($"A concurrency error occurred while saving changes to the database: {ex.Message}");
+				return Result<int>.Failure(ErrorCode.FailedToSaveChanges);
 			}
-			catch (DbUpdateException ex)
+			catch (DbUpdateException)
 			{
 				// Log the update exception details for debugging purposes
-				return Result<int>.Failure($"An error occurred while saving changes to the database: {ex.Message}");
+				return Result<int>.Failure(ErrorCode.FailedToSaveChanges);
 			}
 		}
 

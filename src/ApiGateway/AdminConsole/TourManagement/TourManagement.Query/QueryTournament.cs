@@ -1,6 +1,6 @@
-﻿using Common.FunctionalExtensions;
-using Dapper;
+﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using TourManagement.Common;
 using TourManagement.Application.Queries;
 using TourManagement.Contract;
 

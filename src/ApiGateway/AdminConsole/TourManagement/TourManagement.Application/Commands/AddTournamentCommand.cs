@@ -1,5 +1,4 @@
-﻿using Common.FunctionalExtensions;
-using TourManagement.Common;
+﻿using TourManagement.Common;
 using TourManagement.Contract;
 
 namespace TourManagement.Application.Commands
@@ -36,16 +35,20 @@ namespace TourManagement.Application.Commands
 			bool mensDoubles, bool womensDoubles, bool mixedDoubles)
 		{
 			if (string.IsNullOrWhiteSpace(title))
-				return Result<AddTournamentCommand>.Failure("Title cannot be blank");
+				return Result<AddTournamentCommand>
+					.Failure(ErrorCode.ValidationFailed, "Title cannot be blank");
 
 			if (string.IsNullOrWhiteSpace(location))
-				return Result<AddTournamentCommand>.Failure("Location cannot be blank");
+				return Result<AddTournamentCommand>
+					.Failure(ErrorCode.ValidationFailed, "Location cannot be blank");
 
 			if (!Enum.IsDefined(level))
-				return Result<AddTournamentCommand>.Failure("Invalid tournament level.");
+				return Result<AddTournamentCommand>
+					.Failure(ErrorCode.ValidationFailed, "Invalid tournament level.");
 
 			if (!Enum.IsDefined(surface))
-				return Result<AddTournamentCommand>.Failure("Invalid surface.");
+				return Result<AddTournamentCommand>
+					.Failure(ErrorCode.ValidationFailed, "Invalid surface.");
 
 			var command = new AddTournamentCommand(title, location, level, surface,
 				mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles);

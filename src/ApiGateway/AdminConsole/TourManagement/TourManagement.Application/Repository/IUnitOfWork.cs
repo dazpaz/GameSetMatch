@@ -1,4 +1,4 @@
-﻿using Common.FunctionalExtensions;
+﻿using TourManagement.Common;
 using TourManagement.Domain.TournamentAggregate;
 
 namespace TourManagement.Application.Repository
