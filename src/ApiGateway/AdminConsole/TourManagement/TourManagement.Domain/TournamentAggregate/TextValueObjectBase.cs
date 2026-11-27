@@ -9,7 +9,8 @@ namespace TourManagement.Domain.TournamentAggregate
 		protected static string Validate(string value, string paramName, int maxLength)
 		{
 			var name = char.ToUpperInvariant(paramName[0]) + paramName[1..];
-			TournamentRules.ThrowIfInvalid(TournamentRules.CheckText(value, name, maxLength), paramName);
+			var validationError = TournamentRules.CheckText(value, name, maxLength);
+			TournamentRules.ThrowIfInvalid(validationError, paramName);
 
 			return value.Trim();
 		}
