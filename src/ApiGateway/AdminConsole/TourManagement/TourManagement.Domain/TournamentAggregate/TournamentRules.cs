@@ -54,6 +54,7 @@ namespace TourManagement.Domain.TournamentAggregate
 			var trimmed = value.Trim();
 			if (trimmed.Length > maxLength)
 				return $"{name} cannot be longer than {maxLength} characters";
+
 			if (!Regex.IsMatch(trimmed, AllowedCharactersPattern))
 				return $"{name} contains invalid characters";
 
