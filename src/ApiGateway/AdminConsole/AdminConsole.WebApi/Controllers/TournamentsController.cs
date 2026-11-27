@@ -40,7 +40,7 @@ namespace AdminConsole.WebApi.Controllers
 		public IActionResult AddTournament(AddTournamentDto addTournamentDto)
 		{
 			var command = AddTournamentCommand.CreateFromDto(addTournamentDto);
-			if (command.IsFailure) return BadRequest(command.Error);
+			if (command.IsFailure) return BadRequest(command.ErrorMessage);
 
 			var result = _tournamentCommandHandler.HandleAddTournamentCommand(command.Value);
 
@@ -56,7 +56,7 @@ namespace AdminConsole.WebApi.Controllers
 		public IActionResult UpdateTournament(Guid id, UpdateTournamentDto updateTournamentDto)
 		{
 			var command = UpdateTournamentCommand.CreateFromDto(id, updateTournamentDto);
-			if (command.IsFailure) return BadRequest(command.Error);
+			if (command.IsFailure) return BadRequest(command.ErrorMessage);
 
 			var result = _tournamentCommandHandler.HandleUpdateTournamentCommand(command.Value);
 
@@ -72,7 +72,7 @@ namespace AdminConsole.WebApi.Controllers
 		public IActionResult SetTournamentActive(Guid id, SetTournamentActiveDto setTournamentActiveDto)
 		{
 			var command = SetTournamentActiveCommand.CreateFromDto(id, setTournamentActiveDto);
-			if (command.IsFailure) return BadRequest(command.Error);
+			if (command.IsFailure) return BadRequest(command.ErrorMessage);
 
 			var result = _tournamentCommandHandler.HandleSetTournamentActiveCommand(command.Value);
 

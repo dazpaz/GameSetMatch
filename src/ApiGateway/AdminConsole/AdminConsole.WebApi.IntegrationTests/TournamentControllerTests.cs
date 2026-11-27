@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
@@ -135,8 +135,138 @@ namespace AdminConsole.WebApi.IntegrationTests
 			var location = TheResponseIndicatesTheTournamentWasCreated(response);
 			var created = await GetTournamentFromLocation(client, location);
 			ValidateTournamentHasTheValuesOfTheAddedTournament(created, newTournament);
+		}
 
-			// finally, clean up by deleting the tournament - this will have to be done with SQL
+		[Theory]
+		[InlineData("", "Test City", 1, 1, "Title cannot be blank")]
+		[InlineData("   ", "Test City", 1, 1, "Title cannot be blank")]
+		[InlineData("Integration Test Open", "", 1, 1, "Location cannot be blank")]
+		[InlineData("Integration Test Open", "   ", 1, 1, "Location cannot be blank")]
+		[InlineData("Integration Test Open", "Test City", 9999, 1, "Invalid tournament level.")]
+		[InlineData("Integration Test Open", "Test City", 1, 9999, "Invalid surface.")]
+		public async Task AddTournament_WithInvalidData_ReturnsBadRequest_WithValidationMessage(
+			string title, string location, int level, int surface, string expectedMessage)
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+			AddTournamentDto invalidTournament = CreateTournamentToAdd();
+			invalidTournament.Title = title;
+			invalidTournament.Location = location;
+			invalidTournament.Level = (TournamentLevel)level;
+			invalidTournament.Surface = (Surface)surface;
+
+			// Act
+			var response = await client.PostAsJsonAsync("/tournaments", invalidTournament, TestContext.Current.CancellationToken);
+
+			// Assert
+			TheResponseIndicatesTheRequestWasInvalid(response);
+			var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+			Assert.Contains(expectedMessage, body);
+		}
+
+		[Fact]
+		public async Task AddTournament_WithNoEventsIncluded_ReturnsBadRequest_WithValidationMessage()
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+			AddTournamentDto invalidTournament = CreateTournamentToAdd();
+			invalidTournament.MensSingles = false;
+			invalidTournament.WomensSingles = false;
+			invalidTournament.MensDoubles = false;
+			invalidTournament.WomensDoubles = false;
+			invalidTournament.MixedDoubles = false;
+
+			// Act
+			var response = await client.PostAsJsonAsync("/tournaments", invalidTournament, TestContext.Current.CancellationToken);
+
+			// Assert
+			TheResponseIndicatesTheRequestWasInvalid(response);
+			var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+			Assert.Contains("At least one event must be included.", body);
+		}
+
+		[Fact]
+		public async Task AddTournament_WithInvalidData_DoesNotAddTheTournament()
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+			AddTournamentDto invalidTournament = CreateTournamentToAdd();
+			invalidTournament.Title = " ";
+
+			// Act
+			var response = await client.PostAsJsonAsync("/tournaments", invalidTournament, TestContext.Current.CancellationToken);
+
+			// Assert
+			TheResponseIndicatesTheRequestWasInvalid(response);
+			Assert.Null(response.Headers.Location);
+		}
+
+		[Theory]
+		[InlineData("", "Test City", 1, 1, "Title cannot be blank")]
+		[InlineData("   ", "Test City", 1, 1, "Title cannot be blank")]
+		[InlineData("Integration Test Open", "", 1, 1, "Location cannot be blank")]
+		[InlineData("Integration Test Open", "   ", 1, 1, "Location cannot be blank")]
+		[InlineData("Integration Test Open", "Test City", 9999, 1, "Invalid tournament level.")]
+		[InlineData("Integration Test Open", "Test City", 1, 9999, "Invalid surface.")]
+		public async Task UpdateTournament_WithInvalidData_ReturnsBadRequest_WithValidationMessage(
+			string title, string location, int level, int surface, string expectedMessage)
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+			var tournamentLocation = await AddATournament(client);
+			UpdateTournamentDto invalidUpdate = CreateTournamentUpdate();
+			invalidUpdate.Title = title;
+			invalidUpdate.Location = location;
+			invalidUpdate.Level = (TournamentLevel)level;
+			invalidUpdate.Surface = (Surface)surface;
+
+			// Act
+			var response = await client.PutAsJsonAsync(tournamentLocation, invalidUpdate, TestContext.Current.CancellationToken);
+
+			// Assert
+			TheResponseIndicatesTheRequestWasInvalid(response);
+			var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+			Assert.Contains(expectedMessage, body);
+		}
+
+		[Fact]
+		public async Task UpdateTournament_WithNoEventsIncluded_ReturnsBadRequest_WithValidationMessage()
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+			var tournamentLocation = await AddATournament(client);
+			UpdateTournamentDto invalidUpdate = CreateTournamentUpdate();
+			invalidUpdate.MensSingles = false;
+			invalidUpdate.WomensSingles = false;
+			invalidUpdate.MensDoubles = false;
+			invalidUpdate.WomensDoubles = false;
+			invalidUpdate.MixedDoubles = false;
+
+			// Act
+			var response = await client.PutAsJsonAsync(tournamentLocation, invalidUpdate, TestContext.Current.CancellationToken);
+
+			// Assert
+			TheResponseIndicatesTheRequestWasInvalid(response);
+			var body = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+			Assert.Contains("At least one event must be included.", body);
+		}
+
+		[Fact]
+		public async Task UpdateTournament_WithInvalidData_DoesNotChangeTheTournament()
+		{
+			// Arrange
+			var client = _factory.CreateClient();
+			var tournamentLocation = await AddATournament(client);
+			UpdateTournamentDto invalidUpdate = CreateTournamentUpdate();
+			invalidUpdate.Title = " ";
+
+			// Act
+			var response = await client.PutAsJsonAsync(tournamentLocation, invalidUpdate, TestContext.Current.CancellationToken);
+
+			// Assert
+			TheResponseIndicatesTheRequestWasInvalid(response);
+			var unchanged = await GetTournamentFromLocation(client, tournamentLocation);
+			ValidateTournamentHasTheValuesOfTheAddedTournament(unchanged, CreateTournamentToAdd());
 		}
 
 		[Fact]
@@ -154,8 +284,6 @@ namespace AdminConsole.WebApi.IntegrationTests
 			TheResponseIndicatesTheTournamentWasUpdated(updateResponse);
 			var updated = await GetTournamentFromLocation(client, location);
 			ValidateTournamentHasTheValuesOfTheUpdate(updated, updateTournament);
-
-			// finally, clean up by deleting the tournament - this will have to be done with SQL
 		}
 
 		[Fact]
