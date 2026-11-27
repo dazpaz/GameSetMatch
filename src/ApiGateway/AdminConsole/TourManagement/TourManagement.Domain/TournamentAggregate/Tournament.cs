@@ -1,5 +1,4 @@
 using Common.DomainDesign;
-using Ardalis.GuardClauses;
 using TourManagement.Common;
 
 namespace TourManagement.Domain.TournamentAggregate
@@ -31,8 +30,9 @@ namespace TourManagement.Domain.TournamentAggregate
 		{
 			var tournamentTitle = TournamentTitle.Create(title);
 			var tournamentLocation = TournamentLocation.Create(location);
-			Guard.Against.Default(id, nameof(id));
-			Guard.Against.NoEventsIncluded(mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles);
+			TournamentRules.ThrowIfInvalid(TournamentRules.CheckId(id), nameof(id));
+			TournamentRules.ThrowIfInvalid(TournamentRules.
+				CheckEvents(mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles));
 
 			return new Tournament(id)
 			{
@@ -55,7 +55,8 @@ namespace TourManagement.Domain.TournamentAggregate
 		{
 			var tournamentTitle = TournamentTitle.Create(title);
 			var tournamentLocation = TournamentLocation.Create(location);
-			Guard.Against.NoEventsIncluded(mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles);
+			TournamentRules.ThrowIfInvalid(TournamentRules.
+				CheckEvents(mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles));
 
 			Title = tournamentTitle;
 			Location = tournamentLocation;

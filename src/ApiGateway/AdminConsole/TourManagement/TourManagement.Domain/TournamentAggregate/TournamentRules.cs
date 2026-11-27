@@ -61,6 +61,11 @@ namespace TourManagement.Domain.TournamentAggregate
 			return null;
 		}
 
+		internal static void ThrowIfInvalid(string? error)
+		{
+			if (error is not null) throw new ArgumentException(error);
+		}
+
 		internal static void ThrowIfInvalid(string? error, string paramName)
 		{
 			if (error is not null) throw new ArgumentException(error, paramName);
