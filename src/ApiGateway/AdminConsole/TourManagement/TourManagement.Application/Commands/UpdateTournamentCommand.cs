@@ -1,5 +1,6 @@
 ﻿using TourManagement.Common;
 using TourManagement.Contract;
+using TourManagement.Domain.TournamentAggregate;
 
 namespace TourManagement.Application.Commands
 {
@@ -36,29 +37,12 @@ namespace TourManagement.Application.Commands
 			TournamentLevel level, Surface surface, bool mensSingles, bool womensSingles,
 			bool mensDoubles, bool womensDoubles, bool mixedDoubles)
 		{
-			if (id == Guid.Empty)
-				return Result<UpdateTournamentCommand>
-					.Failure(ErrorCode.ValidationFailed, "Id cannot be empty");
+			var error = TournamentRules.CheckId(id)
+				?? TournamentRules.CheckDetails(title, location, level, surface,
+					mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles);
 
-			if (string.IsNullOrWhiteSpace(title))
-				return Result<UpdateTournamentCommand>
-					.Failure(ErrorCode.ValidationFailed, "Title cannot be blank");
-
-			if (string.IsNullOrWhiteSpace(location))
-				return Result<UpdateTournamentCommand>
-					.Failure(ErrorCode.ValidationFailed, "Location cannot be blank");
-
-			if (!Enum.IsDefined(level))
-				return Result<UpdateTournamentCommand>
-					.Failure(ErrorCode.ValidationFailed, "Invalid tournament level.");
-
-			if (!Enum.IsDefined(surface))
-				return Result<UpdateTournamentCommand>
-					.Failure(ErrorCode.ValidationFailed, "Invalid surface.");
-
-			if (!(mensSingles || womensSingles || mensDoubles || womensDoubles || mixedDoubles))
-				return Result<UpdateTournamentCommand>
-					.Failure(ErrorCode.ValidationFailed, "At least one event must be included.");
+			if (error is not null)
+				return Result<UpdateTournamentCommand>.Failure(ErrorCode.ValidationFailed, error);
 
 			var command = new UpdateTournamentCommand(id, title, location, level, surface,
 				mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles);

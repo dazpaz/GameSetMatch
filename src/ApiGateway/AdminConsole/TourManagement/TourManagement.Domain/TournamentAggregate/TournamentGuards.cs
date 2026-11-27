@@ -7,8 +7,8 @@ namespace TourManagement.Domain.TournamentAggregate
 		public static void NoEventsIncluded(this IGuardClause guardClause, bool mensSingles, bool womensSingles,
 			bool mensDoubles, bool womensDoubles, bool mixedDoubles)
 		{
-			var anyEvents = mensSingles || womensSingles || mensDoubles || womensDoubles || mixedDoubles;
-			if (!anyEvents) throw new ArgumentException("At least one event must be included.");
+			var error = TournamentRules.CheckEvents(mensSingles, womensSingles, mensDoubles, womensDoubles, mixedDoubles);
+			if (error is not null) throw new ArgumentException(error);
 		}
 	}
 }
